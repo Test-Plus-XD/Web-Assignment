@@ -1,0 +1,46 @@
+﻿<!DOCTYPE html>
+<html>
+<?php
+$pageTitle = 'Login';
+$pageCSS = 'login.css';
+require_once 'head.php';
+?>
+<body style="">
+    
+    
+    <!--action="action_page.php"-->
+    <form action="index.html" method="post" onsubmit="setLoginState()" class="form_login">
+        <div class="imgcontainer">
+            <img src="Multimedia/login.png" alt="Login" class="login">
+        </div>
+
+        <div class="container">
+            <label for="uname"><b>Username</b></label>
+            <input type="text" placeholder="Enter Username" name="uname" require>
+
+            <label for="psw"><b>Password</b></label>
+            <input type="password" placeholder="Enter Password" name="psw" require>
+
+            <label><input type="checkbox" checked="checked" name="remember"> Remember me</label>
+
+            <span class="psw">Forgot <a href="https://help.steampowered.com/en/?snr=1_44_44_">password?</a></span>
+
+            <button type="submit">Login</button>
+            <button type="button" class="cancelbtn">Cancel</button>
+        </div>
+    </form>
+
+    <script>
+        function setLoginState() {
+            // Store the login state in localStorage
+            localStorage.setItem('isLoggedIn', 'true');
+        }
+    </script>
+    <?php require_once 'footer.php'; ?>
+</body>
+</html>
+
+<!--#NoEnv  ; Recommended for performance and compatibility with future AutoHotkey releases.
+; #Warn  ; Enable warnings to assist with detecting common errors.
+SendMode Input  ; Recommended for new scripts due to its superior speed and reliability.
+SetWorkingDir %A_ScriptDir%  ; Ensures a consistent starting directory.-->

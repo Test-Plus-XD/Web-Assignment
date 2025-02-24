@@ -1,0 +1,22 @@
+.libraryt_main {
+    border: 3px groove #edededef;
+    background-color: #ffffffc0;
+}
+
+.card {
+    background-color: rgb(255, 255, 255, 0.9);
+    box-shadow: -0.1em 0.1em rgb(255, 255, 255, 0.75);
+    text-shadow: 1px 1px 2px white, 0 0 0.25px blue, 0 0 0.5px darkblue;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    overflow: hidden;
+}
+
+.card-body {
+    background-color: rgb(255, 255, 255, 0.75);
+}
+
+.card .mt-auto {
+    margin-top: auto;
+}
