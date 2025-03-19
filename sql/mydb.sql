@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1:3306
--- Generation Time: Feb 13, 2025 at 02:08 PM
+-- Generation Time: Mar 19, 2025 at 04:25 PM
 -- Server version: 8.3.0
 -- PHP Version: 8.3.6
 
@@ -42,10 +42,15 @@ CREATE TABLE IF NOT EXISTS `tb_accounts` (
 ) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_520_ci COMMENT='The table for user accounts';
 
 --
+-- Truncate table before insert `tb_accounts`
+--
+
+TRUNCATE TABLE `tb_accounts`;
+--
 -- Dumping data for table `tb_accounts`
 --
 
-INSERT INTO `tb_accounts` (`user_id`, `fullname`, `username`, `password`, `isAdmin`) VALUES
+INSERT DELAYED IGNORE INTO `tb_accounts` (`user_id`, `fullname`, `username`, `password`, `isAdmin`) VALUES
 (1, 'Test', 'Test', '5f4dcc3b5aa765d61d8327deb882cf99', 1);
 
 -- --------------------------------------------------------
@@ -68,10 +73,15 @@ CREATE TABLE IF NOT EXISTS `tb_owned_products` (
 ) ENGINE=InnoDB DEFAULT CHARSET=ascii COLLATE=ascii_bin;
 
 --
+-- Truncate table before insert `tb_owned_products`
+--
+
+TRUNCATE TABLE `tb_owned_products`;
+--
 -- Dumping data for table `tb_owned_products`
 --
 
-INSERT INTO `tb_owned_products` (`user_id`, `product_id`, `session`, `purchased_date`) VALUES
+INSERT DELAYED IGNORE INTO `tb_owned_products` (`user_id`, `product_id`, `session`, `purchased_date`) VALUES
 (1, 1, '', '2025-02-12 16:52:21'),
 (1, 2, '', '2025-02-12 16:52:21'),
 (1, 3, '', '2025-02-12 16:52:21'),
@@ -123,11 +133,16 @@ CREATE TABLE IF NOT EXISTS `tb_products` (
 ) ;
 
 --
+-- Truncate table before insert `tb_products`
+--
+
+TRUNCATE TABLE `tb_products`;
+--
 -- Dumping data for table `tb_products`
 --
 
-INSERT INTO `tb_products` (`product_id`, `cardID`, `cardTitle`, `cardText`, `itemPrice`, `isDigital`, `imageSrc`, `imageAlt`, `stock`, `YTLink`, `description`) VALUES
-(1, 'PR2S', 'Phantom Rose 2 Sapphire', 'A roguelike deckbuilding game. Fight and collect powerful cards as Aria, trying to survive in her cherished school that\'s being ravaged by evil creatures', 124, 1, 'Multimedia/PR2S.jpg', 'Phantom Rose 2', NULL, 'https://www.youtube.com/embed/rWcVg_f7cjs?si=Zxz37', 'NON'),
+INSERT DELAYED IGNORE INTO `tb_products` (`product_id`, `cardID`, `cardTitle`, `cardText`, `itemPrice`, `isDigital`, `imageSrc`, `imageAlt`, `stock`, `YTLink`, `description`) VALUES
+(1, 'PR2S', 'Phantom Rose 2 Sapphire', 'A roguelike deckbuilding game. Fight and collect powerful cards as Aria, trying to survive in her cherished school that\'s being ravaged by evil creatures', 125, 1, 'Multimedia/PR2S.jpg', 'Phantom Rose 2', NULL, 'https://www.youtube.com/embed/rWcVg_f7cjs?si=Zxz37', 'NON'),
 (2, 'OH', 'Once Human', 'A multiplayer open-world survival game set in a strange, post-apocalyptic future. Unite with friends to fight monstrous enemies, uncover secret plots, compete for resources, and build your own territory. Once, you were merely human. Now, you have the power to remake the world.', 0, 1, 'Multimedia/Once_Human.jpg', 'Once Human', NULL, '', '<span>\r\n    《七日世界》是一款多人線上開放世界生存遊戲，遊戲發生在一個怪誕的末世背景下。你需要和好友並肩為了生存資源而戰，建造你們的家園領地，並一起克服恐怖的畸變體，揭露世界淪陷的真相。曾經，你是人類中的一分子。現在，你仍是嗎？\r\n</span>    <span>\r\n    <a href=\"https://store.steamchina.com/app/2139460/_/\" class=\"button\" style=\"text-decoration: none;border: 2px solid #007bff;border-radius: 5px;display: inline-block; background-color: transparent; \">\r\n        免費開玩\r\n    </a>\r\n</span>\r\n<p>\r\n    關於這款遊戲\r\n    <br>浩劫改變了星球上的一切，人類，動物，植物……所有生命體都被神秘的外來物質－「星塵」所侵入。作為一個“進化者”，你對星塵的抵禦能力遠甚常人，但這並不意味著你是安全的。在末日中你可以作為獨狼求生，或聯合其他人一同戰鬥，建造，探索。當世界陷入了末日的混沌之時，你是我們最後的希望。\r\n    <br>星球隕落，你是荒野中的求生者\r\n    <br>你在一片荒野中醒來，飢渴難耐，周圍的瓜果與流水觸手可及，卻隱現詭異的藍光——這些被星塵污染的飲食不僅會損害健康，還會使你的理智逐漸崩潰… ……更多的危險蟄伏在暗處，等待著你力竭倒地後撲上來將你分食。進化者，別讓它們如願。\r\n</p><img style=\"display: block;\" src=\"https://shared.cdn.steamchina.eccdnx.com/store_item_assets/steam/apps/2139460/extras/GIF1-%E5%BC%80%E6%94%BE%E4%B8%96%E7%95%8C_%E6%9C%AB%E6%97%A5.gif?t=1728359060\">\r\n<p>\r\n    銀之門洞開，你是挑戰異位生物的戰士\r\n    <br>星塵浩劫滋生出難以計量的畸變體，這些恐怖的怪物幾乎佔據了整個世界。必須從它們手中收復人類的故土！雖然畸變體一直將人類視為獵物，但現在，進化者，這世界有了你…該換我們成為獵人了。\r\n</p>\r\n<img style=\"display: block;\" src=\"https://shared.cdn.steamchina.eccdnx.com/store_item_assets/steam/apps/2139460/extras/GIF2-PVE.gif?t=1728359060\">'),
 (3, 'NoFM', 'Night of Full Moon', 'A stand-alone roguelike card game. Take adventure into Black Forest. Random event, random plot leads to different endings.', 120, 1, 'Multimedia/NoFM.jpg', 'Night of Full Moon', NULL, '', '<span>《月圓之夜》是一款獨立單機卡牌遊戲，探索，冒險，隨機事件，隨機劇情將會導致不同的結局。七大職業，每個職業有專屬的卡組，專屬的流派，100種獨具特色的怪物，揭秘黑森林的秘密。</span>\r\n        <a href=\"https://store.steamchina.com/app/769560/_/\" class=\"button\" style=\"text-decoration: none;border: 2px solid #007bff;border-radius: 5px;display: inline-block; background-color: transparent; \">\r\n            免費開玩\r\n        </a>\r\n        <p>\r\n            合輯內容：\r\n            <ol>\r\n                <li>魔術師</li>\r\n                <li>藥劑師</li>\r\n                <li>狼人</li>\r\n                <li>契約師</li>\r\n                <li>機械師</li>\r\n            </ol>\r\n        </p>\r\n        <p>\r\n            購買 更多內容: <a href=\"payment.php\" class=\"button\" style=\"text-decoration: none;border: 2px solid #007bff;border-radius: 5px;display: inline-block; background-color: transparent; \">\r\n                HK$ 120\r\n            </a>\r\n        </p>\r\n        <p>關於這款遊戲</p>\r\n        <img style=\"display: block; \" src=\"Multimedia/steam_background.png\" alt=\"月圓之夜\">\r\n        <p>\r\n            小紅帽從小就與外婆相依為命，但不幸的是有一天外婆神秘失蹤\r\n            <br>根據警衛隊的調查結果顯示：他們最後的線索都停留在黑森林\r\n            <br>為了尋找唯一的親人，小紅帽孤單一人前往黑森林，這一天正是月圓之夜\r\n            <br>她即將面對的是守護森林的精靈、兇殘的狼人、隱居的女巫、慢慢浮出水面的真相…\r\n        </p>\r\n        <img style=\"display: block; \" src=\"Multimedia/steam_feature.png\" alt=\"月圓之夜\">\r\n        <p>\r\n            這是一本自由探索的黑暗童話書\r\n            <br>* 一款 獨立單機 遊戲\r\n            <br>* 輕度 策略卡牌 戰鬥\r\n            <br>* 隨機 事件探索 冒險\r\n        </p>\r\n        <img style=\"display: block; \" src=\"Multimedia/steam_gameplay.png\" alt=\"月圓之夜\">\r\n        <p>\r\n            * 七大職業 探索事件隨機觸發\r\n            <br>* 女巫森林 童話精靈閃亮登場\r\n            <br>* 卡牌構築 多種流派自由搭配\r\n            <br>* 開放結局 碎片劇情還原真相\r\n        </p>\r\n        <img style=\"display: block; \" src=\"Multimedia/steam_developer.png\" alt=\"月圓之夜\">\r\n        <p>\r\n            我們想堅持做一款\"好玩\"而又\"良心\"的遊戲\r\n            <br>比起\"肝\"與\"氪\"，我們更喜歡\"策略\"與\"故事\"\r\n            <br>遊戲設計借鑒與學習了《Dream Quest》《卡牌冒險家》\r\n            <br>開發團隊於2017年11月17日前往美國約見《Dream Quest》作者 Peter Whalen\r\n            <br>獲得Peter的鼓勵與支持，爭取到了後續開發機會\r\n            <br>《卡牌冒險者》的設計師maou加入了我們團隊\r\n            <br>我們很珍惜做單機遊戲的機會\r\n            <br>希望這款遊戲能為大家帶來快樂\r\n        </p>'),
 (4, 'Dota', 'Dota 2', 'Every day, millions of players worldwide enter battle as one of over a hundred Dota heroes. And no matter if it\'s their 10th hour of play or 1,000th, there\'s always something new to discover. With regular updates that ensure a constant evolution of gameplay, features, and heroes, Dota 2 has taken on a life of its own.', 0, 1, 'Multimedia/Dota2.jpg', 'Dota 2', NULL, '', '<span>\r\n            《刀塔2》是一款免費線上遊戲，支援Windows、Linux和Mac平台，適合13歲以上玩家，提供深度的戰術體驗。\r\n        </span><span>\r\n            完全免費，可以在<a href=\"https://store.steamchina.com/app/570/Dota_2/\" class=\"button\" style=\"text-decoration: none;border: 2px solid #007bff;border-radius: 5px;display: inline-block; background-color: transparent; \">\r\n                Steam平台下載。\r\n            </a>\r\n        </span>\r\n        <p></p>\r\n        <p>\r\n            關於這款遊戲\r\n            <br>在一個充滿魔法與英雄的世界中，玩家將操控各具特色的英雄，參與5v5的激烈對戰，探索與挑戰的奧秘。\r\n            <br>玩家選擇不同的英雄並在戰鬥中發揮各自的技能，進行戰略組合，目標是摧毀敵方基地。\r\n        </p>\r\n        <p>\r\n            一個戰場無限可能\r\n            <br>在英雄、技能和物品的多樣性方面，Dota可謂無與倫比——絕對不可能存在兩場相同的比賽。每個英雄都有多種定位打法，豐富的物品可以滿足每場比賽的特定需求。 Dota從不限制打法，只為讓您展現自己的風采。\r\n        </p>\r\n        <p>\r\n            所有英雄無需付費\r\n            <br>公平競技是Dota的基石，為確保所有人的遊戲基礎相同，遊戲的核心內容——如龐大的英雄數量——對所有玩家開放。粉絲們可以收集英雄飾品，和有趣的附加內容，但是進行遊戲所需的一切在開始第一場比賽前就已經賦予。\r\n        </p>\r\n        <p>\r\n            與好友攜手一同遊玩\r\n            <br>Dota內涵深邃，且不斷進化，但不論何時加入都不算太晚。\r\n            <br>合作對抗機器人可以模擬實戰。英雄試玩模式可以磨練技藝。而比賽的配對系統，兼顧玩家的遊戲行為和水平，確保每場比賽都能將合適的玩家配對在一起。\r\n        </p>\r\n        <span>評測</span><br>\r\n        <p>\r\n            “一款現代的多人遊戲傑作。”\r\n            <br>9.5/10 – Destructoid\r\n        </p>\r\n\r\n        <p>\r\n            “一旦開始了解其中奧秘，就會發現五花八門的玩法，同類遊戲望其項背。”\r\n            <br>9.4/10 – IGN\r\n        </p>\r\n\r\n        <p>\r\n            <br>“Dota 2很可能是唯一一款絲毫不被其商業模式拖累的競技類免費遊戲。”\r\n            <br>90/100 – PC Gamer\r\n        </p>'),
