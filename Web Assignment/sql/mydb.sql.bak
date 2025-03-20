@@ -1,0 +1,139 @@
+-- phpMyAdmin SQL Dump
+-- version 5.2.1
+-- https://www.phpmyadmin.net/
+--
+-- 主機： 127.0.0.1:3306
+-- 產生時間： 2025-02-08 08:47:07
+-- 伺服器版本： 8.3.0
+-- PHP 版本： 8.2.18
+
+SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
+START TRANSACTION;
+SET time_zone = "+00:00";
+
+
+/*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
+/*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
+/*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
+/*!40101 SET NAMES utf8mb4 */;
+
+--
+-- 資料庫： `mydb`
+--
+CREATE DATABASE IF NOT EXISTS `mydb` DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_520_ci;
+USE `mydb`;
+
+-- --------------------------------------------------------
+
+--
+-- 資料表結構 `tb_accounts`
+--
+
+DROP TABLE IF EXISTS `tb_accounts`;
+CREATE TABLE IF NOT EXISTS `tb_accounts` (
+  `user_id` int NOT NULL AUTO_INCREMENT,
+  `fullname` varchar(256) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_520_ci NOT NULL,
+  `username` varchar(256) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_520_ci NOT NULL,
+  `password` varchar(256) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_520_ci NOT NULL,
+  `isAdmin` tinyint(1) NOT NULL,
+  PRIMARY KEY (`user_id`),
+  KEY `user_id` (`user_id`)
+) ENGINE=InnoDB AUTO_INCREMENT=28 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_520_ci COMMENT='The table for user accounts';
+
+--
+-- 資料表新增資料前，先清除舊資料 `tb_accounts`
+--
+
+TRUNCATE TABLE `tb_accounts`;
+--
+-- 傾印資料表的資料 `tb_accounts`
+--
+
+INSERT INTO `tb_accounts` (`user_id`, `fullname`, `username`, `password`, `isAdmin`) VALUES
+(1, 'Test', 'Test', '5f4dcc3b5aa765d61d8327deb882cf99', 1),
+(27, '42', '42', 'a1d0c6e83f027327d8461063f4ac58a6', 0);
+
+-- --------------------------------------------------------
+
+--
+-- 資料表結構 `tb_owned_products`
+--
+
+DROP TABLE IF EXISTS `tb_owned_products`;
+CREATE TABLE IF NOT EXISTS `tb_owned_products` (
+  `user_id` int NOT NULL,
+  `product_id` int NOT NULL,
+  `session` varchar(32) CHARACTER SET ascii COLLATE ascii_general_ci DEFAULT NULL,
+  KEY `product_id` (`product_id`),
+  KEY `user_id` (`user_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=ascii COLLATE=ascii_bin;
+
+--
+-- 資料表新增資料前，先清除舊資料 `tb_owned_products`
+--
+
+TRUNCATE TABLE `tb_owned_products`;
+--
+-- 傾印資料表的資料 `tb_owned_products`
+--
+
+INSERT INTO `tb_owned_products` (`user_id`, `product_id`, `session`) VALUES
+(1, 1, ''),
+(1, 2, ''),
+(1, 3, ''),
+(1, 4, ''),
+(1, 5, '');
+
+-- --------------------------------------------------------
+
+--
+-- 資料表結構 `tb_products`
+--
+
+DROP TABLE IF EXISTS `tb_products`;
+CREATE TABLE IF NOT EXISTS `tb_products` (
+  `product_id` int NOT NULL AUTO_INCREMENT,
+  `cardID` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_520_ci NOT NULL,
+  `cardTitle` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_520_ci NOT NULL,
+  `cardText` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_520_ci NOT NULL,
+  `itemPrice` int NOT NULL,
+  `isDigital` tinyint(1) NOT NULL,
+  `cardLink` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_520_ci NOT NULL,
+  `imageSrc` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_520_ci NOT NULL,
+  `imageAlt` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_520_ci NOT NULL,
+  `stock` int DEFAULT NULL,
+  PRIMARY KEY (`product_id`),
+  KEY `product_id` (`product_id`)
+) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_520_ci;
+
+--
+-- 資料表新增資料前，先清除舊資料 `tb_products`
+--
+
+TRUNCATE TABLE `tb_products`;
+--
+-- 傾印資料表的資料 `tb_products`
+--
+
+INSERT INTO `tb_products` (`product_id`, `cardID`, `cardTitle`, `cardText`, `itemPrice`, `isDigital`, `cardLink`, `imageSrc`, `imageAlt`, `stock`) VALUES
+(1, 'PR2S', 'Phantom Rose 2 Sapphire', 'A roguelike deckbuilding game. Fight and collect powerful cards as Aria, trying to survive in her cherished school that\'s being ravaged by evil creatures.', 125, 1, 'https://store.steampowered.com/app/1964200/2/', 'Multimedia/PR2S.jpg', 'Phantom Rose 2', NULL),
+(2, 'OH', 'Once Human', 'A multiplayer open-world survival game set in a strange, post-apocalyptic future. Unite with friends to fight monstrous enemies, uncover secret plots, compete for resources, and build your own territory. Once, you were merely human. Now, you have the power to remake the world.', 0, 1, 'Once_Human.php', 'Multimedia/Once_Human.jpg', 'Once Human', NULL),
+(3, 'NoFM', 'Night of Full Moon', 'A stand-alone roguelike card game. Take adventure into Black Forest. Random event, random plot leads to different endings.', 120, 1, 'Night_of_Full_Moon.php', 'Multimedia/NoFM.jpg', 'Night of Full Moon', NULL),
+(4, 'Dota', 'Dota 2', 'Every day, millions of players worldwide enter battle as one of over a hundred Dota heroes. And no matter if it\'s their 10th hour of play or 1,000th, there\'s always something new to discover. With regular updates that ensure a constant evolution of gameplay, features, and heroes, Dota 2 has taken on a life of its own.', 0, 1, 'Dota_2.php', 'Multimedia/Dota2.jpg', 'Dota 2', NULL),
+(5, 'CS', 'Counter-Strike: Global Offensive', 'For over two decades, Counter-Strike has offered an elite competitive experience, one shaped by millions of players from across the globe. And now the next chapter in the CS story is about to begin.', 102, 1, 'CS_GO.php', 'Multimedia/CSGO.jpg', 'CS:GO', NULL);
+
+--
+-- 已傾印資料表的限制式
+--
+
+--
+-- 資料表的限制式 `tb_owned_products`
+--
+ALTER TABLE `tb_owned_products`
+  ADD CONSTRAINT `tb_owned_products_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `tb_accounts` (`user_id`) ON DELETE CASCADE,
+  ADD CONSTRAINT `tb_owned_products_ibfk_2` FOREIGN KEY (`product_id`) REFERENCES `tb_products` (`product_id`) ON DELETE CASCADE;
+COMMIT;
+
+/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
+/*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
+/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
