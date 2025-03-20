@@ -37,3 +37,16 @@ jobs:
 
     # - name: Run test suite
     #   run: composer run-script test
+    
+    # Step: Check if Website is Vulnerable
+    - name: Is Website vulnerable
+      uses: lirantal/is-website-vulnerable@v1.14.10
+      with:
+        url: 'http://localhost'  # Adjust this URL to your testing/deployment URL
+
+    # Step: Setup Java JDK (if needed for additional tasks)
+    - name: Setup Java JDK 
+      uses: actions/setup-java@v4.7.0
+      with:
+        java-version: '11'        # Specify the desired Java version
+        distribution: 'temurin'   # Use Temurin distribution
