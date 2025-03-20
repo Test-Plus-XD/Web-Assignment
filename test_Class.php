@@ -4,7 +4,7 @@ ini_set('zend.exception_ignore_args', 'Off');
 require 'vendor/autoload.php';
 // Initialize Sentry with your DSN
 \Sentry\init([
-    'dsn' => 'https://e21244fd9d0d7b39d054e4dda21a860c@o4509003279499264.ingest.de.sentry.io/4509005618741328',
+  'dsn' => 'https://e21244fd9d0d7b39d054e4dda21a860c@o4509003279499264.ingest.de.sentry.io/4509005618741328',
 ]);
 class Class_Test {
     // This method initializes Sentry and tests error capture.
@@ -13,9 +13,9 @@ class Class_Test {
         // Try calling the failing function
         \Sentry\captureMessage('Something went wrong');
         try {
-            $this->functionFailsForSure();
+          $this->functionFailsForSure();
         } catch (\Throwable $exception) {
-            \Sentry\captureException($exception);
+          \Sentry\captureException($exception);
         }
         try {
             throw new \Exception('Test exception from Sentry');
