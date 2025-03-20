@@ -44,9 +44,9 @@ jobs:
       with:
         url: 'http://localhost'  # Adjust this URL to your testing/deployment URL
 
-    # Step: Setup Java JDK (if needed for additional tasks)
+    # Step: Setup Java JDK
     - name: Setup Java JDK 
       uses: actions/setup-java@v4.7.0
       with:
-        java-version: '11'        # Specify the desired Java version
+        java-version: '23'        # Specify the desired Java version
         distribution: 'temurin'   # Use Temurin distribution
