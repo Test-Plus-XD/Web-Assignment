@@ -1,7 +1,8 @@
 <?php
 // Ensure stack trace arguments are captured:
 ini_set('zend.exception_ignore_args', 'Off');
-require 'vendor/autoload.php';
+require_once __DIR__ . '/vendor/autoload.php';
+
 // Initialize Sentry with your DSN
 \Sentry\init([
   'dsn' => 'https://e21244fd9d0d7b39d054e4dda21a860c@o4509003279499264.ingest.de.sentry.io/4509005618741328',
