@@ -24,6 +24,6 @@ if (!isset($_SESSION["isLogin"]) || $_SESSION["isLogin"] !== true) {
     </main>
 
     <?php require_once 'footer.php'; ?>
-    <script src="js/cart.js"></script>
+    <script src="src/js/cart.js"></script>
 </body>
 </html>

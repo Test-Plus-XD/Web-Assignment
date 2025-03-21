@@ -100,6 +100,7 @@
             </section>
         </div>
     </main>
-    <script src="js/dashboard.js?v=1.0" defer></script>
+    <script src="src/js/diagram.js?v=<?php echo time(); ?>"></script>
+    <script src="src/js/dashboard.js?v=1.0" defer></script>
 </body>
 </html>

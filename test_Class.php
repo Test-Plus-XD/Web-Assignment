@@ -13,16 +13,29 @@ class Class_Test {
     {
         // Try calling the failing function
         \Sentry\captureMessage('Something went wrong');
+        Sentry\captureMessage('Something went wrong');
         try {
           $this->functionFailsForSure();
         } catch (\Throwable $exception) {
           \Sentry\captureException($exception);
         }
         try {
+          $this->functionFailsForSure();
+        } catch (Throwable $exception) {
+          Sentry\captureException($exception);
+        }
+        try {
             throw new \Exception('Test exception from Sentry');
         } catch (\Throwable $exception) {
             \Sentry\captureException($exception);
         }
+        try {
+            throw new Exception('Test exception from Sentry');
+        } catch (Throwable $exception) {
+            Sentry\captureException($exception);
+        }
+        \Sentry\captureLastError();
+        Sentry\captureLastError();
     }
 }
 

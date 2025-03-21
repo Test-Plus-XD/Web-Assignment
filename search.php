@@ -10,38 +10,39 @@ require_once 'head.php';
         <div class="container">
             <h1 class="mt-4">Search for Products</h1>
             <!-- Search form -->
-            <form id="searchForm" class="my-2 mx-2">
-                <div class="row">
-                <!-- Search input -->
-                <div class="col-12 col-sm-4 col-md-5 col-lg-5">
-                    <div class="form-floating">
-                        <input type="text" id="searchInput" class="form-control" placeholder=" ">
-                        <label for="searchInput">Search here</label>
+            <div class="sticky-top" style="top:7.5vh">
+                <form id="searchForm" class="my-2 mx-2">
+                    <div class="row">
+                    <!-- Search input -->
+                    <div class="col-12 col-sm-4 col-md-5 col-lg-5">
+                        <div class="form-floating">
+                            <input type="text" id="searchInput" class="form-control" placeholder=" ">
+                            <label for="searchInput">Search here</label>
+                        </div>
                     </div>
-                </div>
-                <div class="col-12 col-sm-2 col-md-1 col-lg-1">
-                    <button type="submit" id="clearButton" class="btn btn-light" style="display: none;">&times;</button>
-                </div>
-                <!-- Dropdown for filtering -->
-                <div class="col-12 col-sm-2 col-md-2 col-lg-2">
-                    <select id="priceFilter" class="form-select">
-                        <option value="all" selected>All Price</option>
-                        <option value="free">Free Games</option>
-                        <option value="paid">Paid Games</option>
-                    </select>
-                </div>
-                <div class="col-12 col-sm-2 col-md-2 col-lg-2">
-                    <select id="typeFilter" class="form-select">
-                        <option value="all" selected>All Type</option>
-                        <option value="digital">Digital Products</option>
-                        <option value="physical">Physical Products</option>
-                    </select>
-                </div>
-                <div class="col-12 col-sm-2 col-md-2 col-lg-2">
-                    <button type="submit" id="searchButton" class="btn btn-primary">Search</button>
-                </div>
+                    <div class="col-12 col-sm-2 col-md-1 col-lg-1">
+                        <button type="submit" id="clearButton" class="btn btn-light" style="display: none;">&times;</button>
+                    </div>
+                    <!-- Dropdown for filtering -->
+                    <div class="col-12 col-sm-2 col-md-2 col-lg-2">
+                        <select id="priceFilter" class="form-select">
+                            <option value="all" selected>All Price</option>
+                            <option value="free">Free Games</option>
+                            <option value="paid">Paid Games</option>
+                        </select>
+                    </div>
+                    <div class="col-12 col-sm-2 col-md-2 col-lg-2">
+                        <select id="typeFilter" class="form-select">
+                            <option value="all" selected>All Type</option>
+                            <option value="digital">Digital Products</option>
+                            <option value="physical">Physical Products</option>
+                        </select>
+                    </div>
+                    <div class="col-12 col-sm-2 col-md-2 col-lg-2">
+                        <button type="submit" id="searchButton" class="btn btn-primary">Search</button>
+                    </div>
+                </form>
             </div>
-        </form>
             <!-- Suggestions container -->
             <div id="suggestions" class="mt-1"></div>
             <!-- Search results container -->
@@ -57,6 +58,6 @@ require_once 'head.php';
     </main>
 
     <?php require_once 'footer.php'; ?>
-    <script src="js/search.js?v=1.0" defer></script> <!-- Verify Script Cache -->
+    <script src="src/js/search.js?v=1.0" defer></script> <!-- Verify Script Cache -->
 </body>
 </html>

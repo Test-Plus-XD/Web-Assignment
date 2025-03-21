@@ -5,7 +5,7 @@ $pageTitle = 'Account';
 $pageCSS = 'account.css';
 include 'head.php';
 ?>
-<script src="js/account_management.js" defer></script>
+<script src="src/js/account_management.js" defer></script>
 <body style="font-family:Zen Maru Gothic">
     
     

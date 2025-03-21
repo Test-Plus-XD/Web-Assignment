@@ -31,7 +31,7 @@ if (isset($_POST["username"])){
 }
 ?>
 
-<script src="js/index.js"></script>
+<script src="src/js/index.js"></script>
 <script>
     const isLoggedIn = <?php echo json_encode($_SESSION["isLogin"]); ?>; // Pass PHP session value to JS
     console.log("Is logged in?: ", isLoggedIn); // Debugging purpose

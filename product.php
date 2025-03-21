@@ -72,6 +72,6 @@ include 'head.php';
         </div>
     </main>
     <?php include 'footer.php'; ?>
-    <script src="js/cart_button.js" defer></script>
+    <script src="src/js/cart_button.js" defer></script>
 </body>
 </html>

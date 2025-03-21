@@ -49,6 +49,6 @@ error_reporting(E_ERROR);
     </main>
 
     <?php require_once 'footer.php'; ?>
-    <script src="js/payment.js" defer></script>
+    <script src="src/js/payment.js" defer></script>
 </body>
 </html>

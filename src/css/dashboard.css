@@ -1,0 +1,136 @@
+html, body {
+    height: 100%;
+    margin: 0;
+    padding: 0;
+}
+
+.dashboard_main {
+    background-color: hsla(0, 0%, 100%, 0.1);
+}
+
+/* Full page container to ensure content fills the viewport */
+.dashboard-container {
+    display: flex;
+    min-height: 100vh;
+}
+
+/* Sidebar styling */
+.dashboard-sidebar {
+    flex: 0 0 20%; /* Fixes width to 10% */
+    border-right: 1px solid rgba(1, 1, 1, 1);
+    padding: 20px;
+    background-color: #e0dfe2; /* Light grey background */
+}
+
+/* Styling for all sidebar links */
+.sidebar-link, .sidebar-submenu {
+    text-decoration: none;
+    display: block;
+    padding: 10px;
+    color: #000;
+    font-weight: bold;
+}
+
+/* Style for sidebar submenu items */
+.sidebar-submenu {
+    font-weight: normal;
+    padding-left: 20px;
+}
+
+    /* Hover effects for better user experience */
+    .sidebar-link:hover, .sidebar-submenu:hover {
+        background-color: rgba(0, 0, 0, 0.1);
+    }
+
+/* Styling for the main content area */
+.dashboard-content {
+    flex: 1; /* Fills remaining space (90%) */
+    padding: 20px;
+    overflow-y: auto; /* Enables vertical scrolling */
+    background-color: #80808080;
+}
+
+/* Ensuring the collapsible menu displays correctly */
+.accordion-button {
+    font-weight: bold;
+    background-color: transparent;
+    border: none;
+    color: #000;
+}
+
+    /* Collapsible button when expanded */
+    .accordion-button:not(.collapsed) {
+        background-color: rgba(0, 0, 255, 0.1);
+        color: #000;
+    }
+
+/* Remove default accordion borders */
+.accordion-item {
+    border: medium;
+}
+
+/* Remove unnecessary padding inside collapsible items */
+.accordion-body {
+    padding: 0.01vw;
+}
+
+/* Remove list bullet points */
+.sidebar-list {
+    list-style: none;
+    padding-left: 0.1vw;
+}
+
+/* Remove default accordion button styling for Overview */
+.no-arrow {
+    display: block;
+    padding: 10px;
+    text-decoration: none;
+    color: #000;
+    font-weight: bold;
+    background-color: transparent;
+    border: none;
+    cursor: pointer;
+}
+
+    /* Remove the padding and background effect that normally triggers the Bootstrap arrow */
+    .no-arrow::after {
+        display: none !important;
+    }
+
+    /* Hover effect for consistency */
+    .no-arrow:hover {
+        background-color: rgba(0, 0, 0, 0.1);
+    }
+
+button {
+    width: 99%;
+    text-align: start;
+}
+
+td {
+    word-wrap: break-word; /* Ensure words break at max width */
+    overflow-wrap: break-word; /* Alternative for better browser compatibility */
+}
+
+    td a {
+        display: inline-block; /* Ensures the link behaves like a block */
+        max-width: 6.7vw; /* Limit width */
+        white-space: normal; /* Allow multi-line wrapping */
+    }
+
+.btn {
+    white-space: nowrap;
+}
+
+.btn-sm {
+    width: 99%;
+    max-width: 3.3vw;
+    max-height: 6.6vh;
+    padding-block-end: 0.5vw;
+    margin-block-end: 0.5vw;
+}
+
+.chart-container {
+    width: 90%;
+    margin: auto;
+}

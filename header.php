@@ -6,7 +6,7 @@
                 <div class="container-fluid">
                     <a class="navbar-brand" href="index.php">
                         <img src="Multimedia/Sliver_Wolf.png" class="nav-icon" alt="Website Icon" />
-                        <span class="website-name">烝氣平臺 &nbsp VAPOR</span>
+                        <span class="website-name">烝汽坪檯 &nbsp VAPOR</span>
                     </a>
                     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-bs-controls="navbarNav" aria-bs-expanded="false" aria-bs-label="Toggle navigation">
                         <span class="navbar-toggler-icon"></span>
