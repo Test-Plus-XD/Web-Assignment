@@ -1,0 +1,4 @@
+AddType application/x-httpd-php .html
+AddHandler application/x-httpd-php .html
+RewriteEngine On
+RewriteRule ^p/([0-9]+)/?$ p.php?id=$1 [L,QSA]
