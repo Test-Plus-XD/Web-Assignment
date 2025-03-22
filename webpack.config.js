@@ -1,18 +1,33 @@
+const {
+    sentryWebpackPlugin
+} = require("@sentry/webpack-plugin");
+
+const {
+    sentryWebpackPlugin
+} = require("@sentry/webpack-plugin");
+
 const path = require("path");
 
 module.exports = {
-    entry: "./src/js/index.js", // Main file
+    // Main file
+    entry: "./src/js/index.js",
+
     output: {
         filename: "bundle.js", // Output file name
         path: path.resolve(__dirname, "dist"), // Output directory
     },
-    mode: "development", // Change to "production" for optimized builds
+
+    // Change to "production" for optimized builds
+    mode: "development",
+
     experiments: {
         topLevelAwait: true // Enable top-level await (for Firebase modules)
     },
+
     resolve: {
         fullySpecified: false // Fixes issues with Firebase ESM imports
     },
+
     module: {
         rules: [
             {
@@ -24,4 +39,16 @@ module.exports = {
             },
         ],
     },
+
+    devtool: "source-map",
+
+    plugins: [sentryWebpackPlugin({
+        authToken: process.env.SENTRY_AUTH_TOKEN,
+        org: "test-plus",
+        project: "js-web-assignment"
+    }), sentryWebpackPlugin({
+        authToken: process.env.SENTRY_AUTH_TOKEN,
+        org: "test-plus",
+        project: "php-web-assignment"
+    })]
 };
