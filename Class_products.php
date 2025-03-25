@@ -186,16 +186,35 @@ class Products {
     }
 }
 
-// This block processes AJAX requests for deletion when this file is accessed directly.
+/// This block processes AJAX requests when this file is accessed directly.
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    // Decode the incoming JSON payload.
     $input = json_decode(file_get_contents('php://input'), true);
-    if ($input && isset($input['action']) && $input['action'] === 'delete' && isset($input['product_id'])) {
-        $DB = new Database();
-        $conn = $DB->getConnection();
-        $products = new Products($conn);
-        $success = $products->deleteProduct($input['product_id']);
-        echo json_encode(["success" => $success]);
-        exit;
+    // Ensure valid JSON
+    if ($input) {
+        // Check if this is a deletion request.
+        if (isset($input['action']) && $input['action'] === 'delete' && isset($input['product_id'])) {
+            $DB = new Database();
+            $conn = $DB->getConnection();
+            $products = new Products($conn);
+            $success = $products->deleteProduct($input['product_id']);
+            echo json_encode(["success" => $success]);
+            exit;
+        }
+        // Otherwise, check if an 'id' is provided to get a single product.
+        elseif (isset($input['id'])) {
+            $DB = new Database();
+            $conn = $DB->getConnection();
+            $products = new Products($conn);
+            $product = $products->getProduct($input['id']);
+            if ($product && $product !== "null") {
+                echo json_encode(["success" => true, "data" => $product]);
+            } else {
+                http_response_code(404);
+                echo json_encode(["success" => false, "error" => "Connection lost."]);
+            }
+            exit;
+        }
     }
 }
 ?>

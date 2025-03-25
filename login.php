@@ -1,12 +1,11 @@
 ﻿<!DOCTYPE html>
-<html>
+<html lang="en">
 <?php
 $pageTitle = 'Login';
 $pageCSS = 'login.css';
 require_once 'head.php';
-ini_set('display_errors', 0);
+$site_key = '6Left_4qAAAAAGSyUGZfW4CPtYlVch3kqI5NWR6X';
 ?>
-
 <?php
     // Session handling
     if (session_status() === PHP_SESSION_NONE){
@@ -20,7 +19,7 @@ ini_set('display_errors', 0);
 
     if (isset($_SESSION["isLogin"])){
         $isLoggedIn = $_SESSION["isLogin"];
-        $isAdmin = $_SESSION["$isAdmin"];
+        $isAdmin = $_SESSION["isAdmin"];
         $_login_username = $_SESSION["login_username"];
         $_login_message = $_SESSION["login_message"];
     }
@@ -34,61 +33,96 @@ ini_set('display_errors', 0);
 ?>
 <body>
     <main class="login_main">
-        <form action="Class_account.php" method="post" onsubmit="setLoginState()" class="form_login">
+        <!-- Original Login Form -->
+        <form action="Class_account.php" method="post" id="login-form" class="form_login" onsubmit="return false;">
+            <input type="hidden" id="recaptchaToken" name="g-recaptcha-response">
             <div class="imgcontainer">
                 <img src="Multimedia/login.png" alt="Login" class="login">
             </div>
-
             <div class="container">
-                <div class="form-floating">
-                    <input type="text" placeholder="" class="form-control" name="username" id="username">
+                <!-- For Firebase email sign-in, treat this as the email field -->
+                <!--<input type="email" placeholder="Email" class="form-control" name="email" id="loginEmail" required autocomplete="email">-->
+                <!--<label for="loginEmail"><b>Enter Email</b></label>-->
+                <div class="form-floating position-relative">
+                    <input type="text" placeholder="" class="form-control" name="username" id="username" required autocomplete="username">
                     <label for="username"><b>Enter Username</b></label>
                 </div>
 
                 <div class="form-floating position-relative">
-                    <input type="password" placeholder="" class="form-control" name="password" id="password">
-                    <label for="password"><b>Enter Password</b></label>
+                    <input type="password" placeholder="Password" class="form-control" name="password" id="loginPassword" required autocomplete="current-password">
+                    <label for="loginPassword"><b>Enter Password</b></label>
                 </div>
 
-                <label><input type="checkbox" checked="checked" name="remember"> Remember me</label>
-                <span class="psw">Forget <a href="https://help.steampowered.com/en/?snr=1_44_44_">password?</a></span>
+                <!-- Hidden field to store reCAPTCHA token -->
+                <input type="hidden" id="g-recaptcha-response" name="g-recaptcha-response">
+                <button type="submit" class="btn btn-primary" value="Login" onclick="executeRecaptcha('login', submitLoginForm)">Login</button>
 
-                <button type="submit" class="btn btn-primary" value="Login">Login</button>
-                <button type="button" class="btn btn-info" value="Register" onclick="window.location.href='registration.php';">Register</button>
+                <!-- Trigger Firebase sign-in -->
+                <!--<button type="button" id="email-signin-btn" class="btn btn-primary" onclick="executeRecaptcha('verify')">Login with Email</button>-->
+                <button type="button" class="btn btn-info" onclick="window.location.href='registration.php';">Register</button>
                 <button type="button" class="cancelbtn btn btn-danger" onclick="history.back()">Cancel</button>
+
+                <!-- Divider -->
+                <hr style="margin: 30px 3;">
+
+                <!-- Social login options -->
+                <div class="social-login" style="text-align: center;">
+                    <h3>Or sign in with:</h3>
+                    <!-- Email Sign-In -->
+                    <button id="email-signin-btn" class="btn btn-warning g-recaptcha" data-sitekey="<?php echo $site_key ?>" onclick="executeRecaptcha('email_signin', handleEmailSignIn)">
+                        <i class="bi bi-mailbox2-flag"></i> Email
+                    </button>
+                    <!-- Google Sign-In -->
+                    <button id="google-signin-btn" class="btn btn-danger g-recaptcha" data-sitekey="<?php echo $site_key ?>" onclick="executeRecaptcha('google_signin', handleGoogleSignIn)">
+                        <i class="bi bi-google"></i> Google
+                    </button>
+                    <!-- GitHub Sign-In -->
+                    <button id="github-signin-btn" class="btn btn-dark g-recaptcha" data-sitekey="<?php echo $site_key ?>" onclick="executeRecaptcha('github_signin', handleGitHubSignIn)">
+                        <i class="bi bi-github"></i> GitHub
+                    </button>
+                    <!-- Anonymous Sign-In -->
+                    <button id="anonymous-signin-btn" class="btn btn-secondary g-recaptcha" data-sitekey="<?php echo $site_key ?>" onclick="executeRecaptcha('anonymous_signin', handleAnonymousSignIn)">
+                        <i class="bi bi-person-walking"></i> Anonymous
+                    </button>
+                </div>
+
+                <!-- reCAPTCHA UI-->
+                <div class="g-recaptcha" style="display: flex; justify-content: center; align-items: center;" data-sitekey="<?php echo $site_key ?>"></div>
+                <!-- Fallback for non-JS users -->
+                <noscript>
+                    <div style="width: 302px; height: 422px;">
+                        <div style="width: 302px; height: 422px; position: relative;">
+                            <div style="width: 302px; height: 422px; position: absolute;">
+                                <iframe
+                                    src="https://www.google.com/recaptcha/api/fallback?k=<?php echo $site_key ?>"
+                                    frameborder="0"
+                                    scrolling="no"
+                                    style="width: 302px; height:422px; border-style: none;"
+                                ></iframe>
+                            </div>
+                            <div style="width: 250px; height: 80px; position: absolute; border-bottom: 1px solid #d3d3d3; background: #f9f9f9; color: #dadada; font-family: Arial, sans-serif; font-size: 12px; padding: 10px; text-align: center; left: 15px; top: 345px;">
+                                <span style="width: 250px; height: 80px; display: inline-block;"></span>
+                            </div>
+                        </div>
+                    </div>
+                </noscript>
+
+                <!-- FirebaseUI container for authentication widget -->
+                <div style="text-align:center;">Firebase UI</div>
+                <div id="firebaseui-auth-container"></div>
+                <div id="loader"> Loading.... </div>
             </div>
         </form>
-
-        <!-- Divider -->
-        <hr style="margin: 20px 0;">
-
-        <!-- Social login options -->
-        <div class="social-login" style="text-align: center;">
-            <h3>Or sign in with:</h3>
-            <!-- Google Sign-In -->
-            <button id="google-signin-btn" class="btn btn-outline-danger"><i class="bi bi-google"></i> Google</button>
-            <!-- GitHub Sign-In -->
-            <button id="github-signin-btn" class="btn btn-outline-dark"><i class="bi bi-github"></i> GitHub</button>
-        </div>
-
-        <!-- FirebaseUI container for authentication widget -->
-        <div id="firebaseui-auth-container"></div>
-        <div id="loader"><i class="bi bi-person-walking"></i>Loading...</div>
-
         <?php
             // Display login message if available.
             echo "<div class='display-5 text-danger m-1' style='text-align:center;'>$_login_message</div>";
         ?>
     </main>
-
-    <script>
-        function setLoginState() {
-            // Store the login state in localStorage
-            localStorage.setItem('isLoggedIn', 'true');
-        }
-    </script>
-    <script type="module" src="src/js/account.js"></script>
-    <script src="src/js/login.js"></script>
+    <!-- Attaches event listeners to the buttons -->
+    <script src="src/js/firebase_cdn.js"></script>
+    <script src="src/js/firebaseUI.js"></script>
+    <script src="src/js/reCAPTCHA.js"></script>
+    <script src="src/js/login.js" defer></script>
     <?php require_once 'footer.php'; ?>
 </body>
 </html>

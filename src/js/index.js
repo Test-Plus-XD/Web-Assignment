@@ -77,8 +77,8 @@ function updateLibraryBadge() {
 
 // Show/Hide Password Function
 document.addEventListener("DOMContentLoaded", () => {
-    // Select all password fields that start with "password"
-    document.querySelectorAll("input[type='password'][id^='password']").forEach(passwordInput => {
+    // Select all password fields that start with "password" [id^='password']
+    document.querySelectorAll("input[type='password']").forEach(passwordInput => {
         const id = passwordInput.id; // Get the ID of the password input
         const parent = passwordInput.parentElement; // Get the parent container
 
@@ -107,3 +107,17 @@ document.addEventListener("DOMContentLoaded", () => {
 // Call the function initially to ensure the badge is updated on page load
 updateCartBadge();
 updateLibraryBadge();
+// Save the current page URL before redirecting to the login page
+if (!localStorage.getItem("preLoginUrl") && window.location.pathname.split("/").pop() !== "login.php") localStorage.setItem("preLoginUrl", window.location.href);
+
+// Sentry Debug
+Sentry.onLoad(function () {
+    Sentry.init({
+        // Tracing
+        tracesSampleRate: 1.0, // Capture 100% of the transactions
+        // Session Replay
+        replaysSessionSampleRate: 0.5, // This sets the sample rate at 50%. You may want to change it to 100% while in development and then sample at a lower rate in production.
+        replaysOnErrorSampleRate: 1.0, // If you're not already sampling the entire session, change the sample rate to 100% when sampling sessions where errors occur.
+    });
+});
+//myUndefinedFunction();

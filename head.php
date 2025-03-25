@@ -9,9 +9,9 @@
     
     require_once 'vendor/autoload.php';
     \Sentry\init([
-    'dsn' => 'https://e21244fd9d0d7b39d054e4dda21a860c@o4509003279499264.ingest.de.sentry.io/4509005618741328',
-    'traces_sample_rate' => 1.0, // Specify a fixed sample rate
-    'profiles_sample_rate' => 1.0, ]); // Set a sampling rate for profiling - this is relative to traces_sample_rate
+      'dsn' => 'https://15a42c46abc6f184fcd2810733380450@o4509003279499264.ingest.de.sentry.io/4509019227619408',
+      // Specify a fixed sample rate
+      'traces_sample_rate' => 1.0, ]);
 ?>
 <head>
     <meta charset="UTF-8">
@@ -35,7 +35,14 @@
         <!-- jQuery -->
     <script src="https://ajax.aspnetcdn.com/ajax/jQuery/jquery-3.3.1.min.js"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
-        <!-- Firebase UI -->
+        <!-- reCAPTCHA +&hl=zh_tw -->
+    <script src="https://www.google.com/recaptcha/api.js?render=explicit" async defer></script>
+        <!-- Firebase -->
+    <script src="https://www.gstatic.com/firebasejs/11.5.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/11.5.0/firebase-app-check-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/11.5.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/11.5.0/firebase-analytics-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/11.5.0/firebase-firestore-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/ui/6.1.0/firebase-ui-auth.js"></script>
     <script src="https://www.gstatic.com/firebasejs/ui/6.1.0/firebase-ui-auth__zh_tw.js"></script>
     <link type="text/css" rel="stylesheet" href="https://www.gstatic.com/firebasejs/ui/6.1.0/firebase-ui-auth.css"/>
@@ -45,9 +52,7 @@
     <link rel="icon" type="image/x-icon" href="Multimedia/Sliver_Wolf.png">
     <script> const isLoggedIn = <?php echo json_encode($_SESSION["isLogin"] ?? false); ?>; </script>
     <script> const isAdmin = <?php echo json_encode($_SESSION["isAdmin"] ?? false); ?>; </script>
-    <script type="module" src="src/js/firebase.js"></script>
-    <script src="src/js/third_party.js"></script>
-    <script src="dist/bundle.js" defer></script>
+    <script src="dist/bundle.js"></script>
     <script src="src/js/index.js" defer></script>
     <link rel="stylesheet" href="src/css/index.css">
     <link rel="stylesheet" href="src/css/<?php echo $pageCSS ?>">
