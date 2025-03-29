@@ -68,3 +68,4 @@ function handleGitHubSignIn(token) {
         console.error("window.githubSignInPopup is not a function.");
     }
 }
+

@@ -36,7 +36,7 @@
     <script src="https://ajax.aspnetcdn.com/ajax/jQuery/jquery-3.3.1.min.js"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
         <!-- reCAPTCHA +&hl=zh_tw -->
-    <script src="https://www.google.com/recaptcha/api.js?render=explicit" async defer></script>
+    <script src="https://www.google.com/recaptcha/api.js?render=6Left_4qAAAAAGSyUGZfW4CPtYlVch3kqI5NWR6X" async defer></script>
         <!-- Firebase -->
     <script src="https://www.gstatic.com/firebasejs/11.5.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/11.5.0/firebase-app-check-compat.js"></script>

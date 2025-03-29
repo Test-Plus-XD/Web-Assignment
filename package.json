@@ -5,7 +5,7 @@
     "firebase": "^11.5.0"
   },
   "name": "web-assignment",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Admin Account[\r Account: Test\r Password: password\r ]",
   "main": "index.js",
   "devDependencies": {

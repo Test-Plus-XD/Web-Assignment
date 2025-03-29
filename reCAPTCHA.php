@@ -2,7 +2,7 @@
 // Set the Content-Type header to JSON.
 header('Content-Type: application/json');
 // Your reCAPTCHA secret key
-$secretKey = '6Lfniv8qAAAAAOhGK2XfG07fZHw4eTlk5eczgKBZ';
+$secretKey = '6Left_4qAAAAAJoPcX2VF4aAZbQhVlJDLv8A9YJZ';
 // Retrieve the token from the POST data.
 $token = $_POST['g-recaptcha-response'] ?? '';
 
@@ -31,11 +31,10 @@ $verificationData = json_decode($verifyResponse, true);
 $debugToken = '913A6B2B-FDCB-464A-B69E-BFEF50736A2C';
 
 // Check if the verification succeeded with an acceptable score and matching action.
-if (
-    $verificationData["success"] &&
-    isset($verificationData["score"]) && $verificationData["score"] >= 0.25 && // Increased score threshold for better security
-    isset($verificationData["action"]) && $verificationData["action"] === "login"
-) {
+if ($verificationData["success"] &&
+    isset($verificationData["score"]) && $verificationData["score"] >= 0.05 && // Increased score threshold for better security
+    isset($verificationData["action"]) && $verificationData["action"] === "login") 
+    {
     echo json_encode(["success" => true, "message" => "reCAPTCHA verification passed.", "debugToken" => $debugToken]);
 } else {
     http_response_code(400);

@@ -69,25 +69,25 @@ $site_key = '6Left_4qAAAAAGSyUGZfW4CPtYlVch3kqI5NWR6X';
                 <div class="social-login" style="text-align: center;">
                     <h3>Or sign in with:</h3>
                     <!-- Email Sign-In -->
-                    <button id="email-signin-btn" class="btn btn-warning g-recaptcha" data-sitekey="<?php echo $site_key ?>" onclick="executeRecaptcha('email_signin', handleEmailSignIn)">
+                    <button id="email-signin-btn" class="btn btn-warning" data-sitekey="<?php echo $site_key ?>" onclick="executeRecaptcha('email_signin', handleEmailSignIn)">
                         <i class="bi bi-mailbox2-flag"></i> Email
                     </button>
                     <!-- Google Sign-In -->
-                    <button id="google-signin-btn" class="btn btn-danger g-recaptcha" data-sitekey="<?php echo $site_key ?>" onclick="executeRecaptcha('google_signin', handleGoogleSignIn)">
+                    <button id="google-signin-btn" class="btn btn-danger" data-sitekey="<?php echo $site_key ?>" onclick="executeRecaptcha('google_signin', handleGoogleSignIn)">
                         <i class="bi bi-google"></i> Google
                     </button>
                     <!-- GitHub Sign-In -->
-                    <button id="github-signin-btn" class="btn btn-dark g-recaptcha" data-sitekey="<?php echo $site_key ?>" onclick="executeRecaptcha('github_signin', handleGitHubSignIn)">
+                    <button id="github-signin-btn" class="btn btn-dark" data-sitekey="<?php echo $site_key ?>" onclick="executeRecaptcha('github_signin', handleGitHubSignIn)">
                         <i class="bi bi-github"></i> GitHub
                     </button>
                     <!-- Anonymous Sign-In -->
-                    <button id="anonymous-signin-btn" class="btn btn-secondary g-recaptcha" data-sitekey="<?php echo $site_key ?>" onclick="executeRecaptcha('anonymous_signin', handleAnonymousSignIn)">
+                    <button id="anonymous-signin-btn" class="btn btn-secondary" data-sitekey="<?php echo $site_key ?>" onclick="executeRecaptcha('anonymous_signin', handleAnonymousSignIn)">
                         <i class="bi bi-person-walking"></i> Anonymous
                     </button>
                 </div>
 
-                <!-- reCAPTCHA UI-->
-                <div class="g-recaptcha" style="display: flex; justify-content: center; align-items: center;" data-sitekey="<?php echo $site_key ?>"></div>
+                <!-- reCAPTCHA UI -->
+                <!-- <div class="g-recaptcha" style="display: flex; justify-content: center; align-items: center;" data-sitekey="<?php echo $site_key ?>"></div> -->
                 <!-- Fallback for non-JS users -->
                 <noscript>
                     <div style="width: 302px; height: 422px;">
