@@ -5,8 +5,13 @@ require_once __DIR__ . '/vendor/autoload.php';
 
 // Initialize Sentry with your DSN
 \Sentry\init([
-  'dsn' => 'https://e21244fd9d0d7b39d054e4dda21a860c@o4509003279499264.ingest.de.sentry.io/4509005618741328',
+  'dsn' => 'https://15a42c46abc6f184fcd2810733380450@o4509003279499264.ingest.de.sentry.io/4509019227619408',
+  // Specify a fixed sample rate
+  'traces_sample_rate' => 1.0,
+  // Set a sampling rate for profiling - this is relative to traces_sample_rate
+  'profiles_sample_rate' => 1.0,
 ]);
+
 class Class_Test {
     // This method initializes Sentry and tests error capture.
     public function runTest()

@@ -1,127 +1,196 @@
 <?php
-require_once "Class_db_connect.php";
+// Include Firestore configuration, constants, and API trait
+require_once 'firestore.php';
 
 class Users {
-    private $conn;
-    private $table_name = "tb_accounts";
+    // Import Firestore REST helpers and parsers from the trait
+    use FirestoreApiTrait;
 
-    // Constructor: initializes the class with a PDO connection.
-    public function __construct($DB) {
-        $this->conn = $DB;
+    // The Firestore collection where user accounts live
+    private const COLLECTION_NAME = 'tb_accounts';
+
+    // Tell the trait which collection to operate on
+    protected function getCollectionName(): string {
+        return self::COLLECTION_NAME;
     }
 
-    // Display all users
-    public function display($limit = null, $offset = 0) {
-        $query = "SELECT * FROM " . $this->table_name . " ORDER BY user_id ASC";
-        if ($limit !== null) {
-            $query .= " LIMIT :offset, :limit";
+    // List all user documents
+    public function listUsers(): array {
+        // GET /tb_accounts
+        // Example: curl -X GET http://your-domain.com/Class_users.php/all
+        $response = $this->_makeRequest('', 'GET');
+        $users = [];
+        if (isset($response['documents'])) {
+            foreach ($response['documents'] as $document) {
+                $users[] = $this->_parseFirestoreDocument($document);
+            }
+        }
+        return $users;
+    }
+
+    // Fetch a single user by their Firebase UID
+    public function getUserByUid(string $uid): ?array {
+        $url = FIRESTORE_API_BASE_URL . ':runQuery?key=' . $this->apiKey;
+        $ch = curl_init($url);
+
+        $queryData = [
+            'structuredQuery' => [
+                'from' => [['collectionId' => self::COLLECTION_NAME]],
+                'where' => [
+                    'fieldFilter' => [
+                        'field' => ['fieldPath' => 'uid'],
+                        'op' => 'EQUAL',
+                        'value' => ['stringValue' => $uid],
+                    ],
+                ],
+                'limit' => 1,
+            ],
+        ];
+        $jsonData = json_encode($queryData);
+        // Apply common Firestore cURL options for POST (runQuery uses POST).
+        setFirestoreCurlOptions($ch, 'POST');
+        // Attach the JSON-encoded query payload to the request body.
+        curl_setopt($ch, CURLOPT_POSTFIELDS, $jsonData);
+        // Execute the cURL request.
+        $response  = curl_exec($ch);
+        // Get the HTTP status code.
+        $httpCode  = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+        // Check for cURL errors.
+        $curlError = curl_error($ch);
+        // Close the cURL session.
+        curl_close($ch);
+
+        if ($curlError) {
+            error_log("Firestore API cURL Error for getUserByUid: " . $curlError);
+            return ['error' => 'cURL Error', 'details' => $curlError];
         }
 
-        $stmt = $this->conn->prepare($query);
-        if ($limit !== null) {
-            $stmt->bindParam(":offset", $offset, PDO::PARAM_INT);
-            $stmt->bindParam(":limit", $limit, PDO::PARAM_INT);
+        if ($httpCode < 200 || $httpCode >= 300) {
+            error_log("Firestore API HTTP Error {$httpCode} for getUserByUid: " . $response);
+            $decoded = json_decode($response, true);
+            return $decoded ?: ['error' => "HTTP Error {$httpCode}", 'details' => $response];
         }
 
-        $stmt->execute();
-        return $stmt->fetchAll(PDO::FETCH_ASSOC);
-    }
-
-    // Count the total number of users in the database.
-    public function countAll() {
-        $query = "SELECT COUNT(*) FROM " . $this->table_name;
-        $stmt = $this->conn->prepare($query);
-        $stmt->execute();
-        return $stmt->fetchColumn();
-    }
-
-    // Get a single user by ID
-    public function getUser($id) {
-        // Get column types dynamically
-        $columnsQuery = "SHOW COLUMNS FROM " . $this->table_name;
-        $columnsStmt = $this->conn->query($columnsQuery);
-        $columns = [];
-        while ($row = $columnsStmt->fetch(PDO::FETCH_ASSOC)) {
-            $columns[$row['Field']] = $row['Type'];
+        $decodedResponse = json_decode($response, true);
+        if (isset($decodedResponse[0]['document'])) {
+            return $this->_parseFirestoreDocument($decodedResponse[0]['document']);
         }
-
-        // Fetch the user record
-        $query = "SELECT * FROM " . $this->table_name . " WHERE user_id = ? LIMIT 1";
-        $stmt = $this->conn->prepare($query);
-        $stmt->execute([$id]);
-        $user = $stmt->fetch(PDO::FETCH_ASSOC);
-
-        // Attach column types to the returned data
-        return $user ? ['data' => $user, 'types' => $columns] : null;
+        return null;
     }
 
-    // Inserts a new user into the tb_accounts table and returns the new user ID or false on failure
-    public function insertUser($data) {
-        // Build the INSERT query using named placeholders
-        $query = "INSERT INTO " . $this->table_name . " 
-                  (fullname, username, password, isAdmin)
-                  VALUES (:fullname, :username, :password, :isAdmin)";
-        $stmt = $this->conn->prepare($query);
+    public function getUser(string $id): array {
+        $response = $this->_makeRequest($id, 'GET');
+        if (isset($response['fields'])) {
+            return $this->_parseFirestoreDocument($response);
+        }
+        return $response;
+    }
 
-        // Sanitize and bind parameters
-        $fullname = htmlspecialchars(strip_tags($data['fullname']));
-        $username = htmlspecialchars(strip_tags($data['username']));
-        $password = $data['password'];
-        $isAdmin  = $data['isAdmin'] ?? 0;
-
-        $stmt->bindParam(":fullname", $fullname);
-        $stmt->bindParam(":username", $username);
-        $stmt->bindParam(":password", md5($password));
-        $stmt->bindParam(":isAdmin", $isAdmin);
-
-        if ($stmt->execute()) {
-            return $this->conn->lastInsertId(); // Return the new user ID
+    public function handleCreateUser(array $data): void {
+        if (isset($data['uid']) && $this->checkUserExistsByUid($data['uid'])) {
+            echo json_encode(['success' => true, 'message' => 'User already exists']);
         } else {
-            return false;
+            $result = $this->insertUser($data);
+            echo json_encode($result);
         }
     }
 
-
-    // Update user details (excluding password for security)
-    public function updateUser($id, $data) {
-        $query = "UPDATE " . $this->table_name . " 
-                        SET fullname = :fullname, username = :username, isAdmin = :isAdmin 
-                        WHERE user_id = :user_id";
-        $stmt = $this->conn->prepare($query);
-
-        // Store sanitized values in variables
-        $fullname = htmlspecialchars(strip_tags($data['fullname']));
-        $username = htmlspecialchars(strip_tags($data['username']));
-        $isAdmin = $data['isAdmin'];
-        $user_id = $id; // Separate variable for binding
-
-        // Bind values to the prepared statement
-        $stmt->bindParam(':fullname', $fullname);
-        $stmt->bindParam(':username', $username);
-        $stmt->bindParam(':isAdmin', $isAdmin);
-        $stmt->bindParam(':user_id', $user_id);
-
-        return $stmt->execute();
+    public function insertUser(array $data): array {
+        return $this->_makeRequest('', 'POST', $data);
     }
 
-    // Delete a user
-    public function deleteUser($id) {
-        $query = "DELETE FROM " . $this->table_name . " WHERE user_id = ?";
-        $stmt = $this->conn->prepare($query);
-        return $stmt->execute([$id]);
+    public function updateUser(string $id, array $data): array {
+        return $this->_makeRequest($id, 'PATCH', $data);
+    }
+
+    public function deleteUser(string $id): array {
+        return $this->_makeRequest($id, 'DELETE');
+    }
+
+    private function deleteUserByUid(string $uid): array {
+        $user = $this->getUserByUid($uid);
+        if ($user && isset($user['id'])) { // Use 'id' as it's the document ID now
+            return $this->deleteUser($user['id']);
+        } else {
+            return ['error' => 'User not found with UID: ' . $uid];
+        }
+    }
+
+    private function checkUserExistsByUid(string $uid): bool {
+        $user = $this->getUserByUid($uid);
+        return $user !== null;
     }
 }
 
-// This block processes AJAX requests for deletion when this file is accessed directly.
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $input = json_decode(file_get_contents('php://input'), true);
-    if ($input && isset($input['action']) && $input['action'] === 'delete' && isset($input['user_id'])) {
-        $DB = new Database();
-        $conn = $DB->getConnection();
-        $users = new Users($conn);
-        $success = $users->deleteUser($input['user_id']);
-        echo json_encode(["success" => $success]);
-        exit;
+// Endpoint handler block for Users, routes requests based on PATH_INFO and HTTP method to output JSON
+if (isset($_SERVER['PATH_INFO'])) {
+    $pathInfo = trim($_SERVER['PATH_INFO'], '/'); // Get the path information from the URL and trim leading/trailing slashes
+    $segments = explode('/', $pathInfo); // Split the path information into an array of segments
+    $method = $_SERVER['REQUEST_METHOD']; // Get the HTTP request method (GET, POST, PUT, DELETE, etc.)
+    $users = new Users(); // Create an instance of the Users class
+    header('Content-Type: application/json'); // Set the Content-Type header to application/json for API responses
+
+    if ($method === 'GET') {
+        if (isset($segments[0]) && $segments[0] === 'user' && isset($segments[1])) {
+            // Handle GET request for /user/{id} to retrieve a user by their document ID
+            // Example cURL command: curl -X GET http://your-domain.com/Class_users.php/user/some_document_id
+            echo json_encode($users->getUser($segments[1]));
+        } elseif (isset($segments[0]) && $segments[0] === 'uid' && isset($segments[1])) {
+            // Handle GET request for /uid/{id} to retrieve a user by their Firebase UID
+            // Example cURL command: curl -X GET http://your-domain.com/Class_users.php/uid/some_firebase_uid
+            echo json_encode($users->getUserByUid($segments[1]));
+        } elseif (isset($segments[0]) && $segments[0] === 'all') {
+            // Handle GET request for /all to retrieve all user records
+            // Example cURL command: curl -X GET http://your-domain.com/Class_users.php/all
+            echo json_encode($users->listUsers());
+        } else {
+            http_response_code(400); // Set the HTTP response code to 400 (Bad Request)
+            echo json_encode(['error' => 'Invalid GET request']); // Return a JSON error message for invalid GET requests
+        }
+    } elseif ($method === 'POST') {
+        $data = json_decode(file_get_contents('php://input'), true); // Decode the JSON data sent in the request body
+        if (isset($segments[0]) && $segments[0] === 'uid') {
+            // Handle POST request to /uid to insert a new user record
+            // Example cURL command: curl -X POST -H "Content-Type: application/json" -d '{"uid": "new_uid", "email": "new@example.com"}' http://your-domain.com/Class_users.php/uid
+            echo json_encode($users->insertUser($data));
+        }
+        // Handle POST request to /create for user registration (checks for existing user)
+        elseif (isset($segments[0]) && $segments[0] === 'create') {
+            $data = json_decode(file_get_contents('php://input'), true); // Decode the JSON data sent in the request body
+            // Example cURL command: curl -X POST -H "Content-Type: application/json" -d '{"uid": "existing_or_new_uid", "email": "user@example.com"}' http://your-domain.com/Class_users.php/create
+            $users->handleCreateUser($data); // Call the public method
+        }
+        else {
+            http_response_code(400); // Set the HTTP response code to 400 (Bad Request)
+            echo json_encode(['error' => 'Invalid POST request']); // Return a JSON error message for invalid POST requests
+        }
+    } elseif ($method === 'PUT' || $method === 'PATCH') {
+        // Handle PUT or PATCH request for /uid/{id} to update an existing user record
+        if (isset($segments[0], $segments[1]) && $segments[0] === 'uid') {
+            $data = json_decode(file_get_contents('php://input'), true); // Decode the JSON data from the request body
+            // Example cURL command (PUT): curl -X PUT -H "Content-Type: application/json" -d '{"email": "updated@example.com"}' http://your-domain.com/Class_users.php/uid/some_firebase_uid
+            // Example cURL command (PATCH): curl -X PATCH -H "Content-Type: application/json" -d '{"email": "updated@example.com"}' http://your-domain.com/Class_users.php/uid/some_firebase_uid
+            echo json_encode($users->updateUser($segments[1], $data));
+        } else {
+            http_response_code(400); // Set the HTTP response code to 400 (Bad Request)
+            echo json_encode(['error' => 'Invalid PUT/PATCH request']); // Return a JSON error message for invalid PUT or PATCH requests
+        }
+    } elseif ($method === 'DELETE') {
+        // Handle DELETE request for /user/{id} to delete a user record by document ID
+        if (isset($segments[0]) && $segments[0] === 'user' && isset($segments[1])) {
+            // Example cURL command: curl -X DELETE http://your-domain.com/Class_users.php/user/some_document_id
+            echo json_encode($users->deleteUser($segments[1]));
+        } elseif (isset($segments[0]) && $segments[0] === 'uid' && isset($segments[1])) {
+            // Handle DELETE request for /uid/{id} to delete a user record by Firebase UID
+            // Example cURL command: curl -X DELETE http://your-domain.com/Class_users.php/uid/some_firebase_uid
+            echo json_encode($users->deleteUserByUid($segments[1]));
+        } else {
+            http_response_code(400); // Set the HTTP response code to 400 (Bad Request)
+            echo json_encode(['error' => 'Invalid DELETE request']); // Return a JSON error message for invalid DELETE requests
+        }
+    } else {
+        http_response_code(405); // Set the HTTP response code to 405 (Method Not Allowed)
+        echo json_encode(['error' => 'Method not allowed']); // Return a JSON error message for unsupported HTTP methods
     }
 }
 ?>

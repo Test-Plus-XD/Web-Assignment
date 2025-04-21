@@ -1,220 +1,117 @@
 <?php
-require_once "Class_db_connect.php";
+// Include Firestore configuration, constants, and API trait
+require_once 'firestore.php';
 
 class Products {
-    private $conn;
-    private $table_name = "tb_products";
+    // Import Firestore REST helpers and parsers
+    use FirestoreApiTrait;
 
-    // Constructor: initializes the class with a PDO connection.
-    public function __construct($DB) {
-        $this->conn = $DB;
+    // The Firestore collection for products
+    private const COLLECTION_NAME = 'tb_products';
+
+    // Return the collection name (required by the trait)
+    protected function getCollectionName(): string {
+        return self::COLLECTION_NAME;
     }
 
-    // Display all products with optional pagination.
-    public function display($limit = null, $offset = 0) {
-        $query = "SELECT * FROM " . $this->table_name . " ORDER BY product_id ASC";
-        if ($limit !== null) {
-            $query .= " LIMIT :offset, :limit";
-        }
-
-        $stmt = $this->conn->prepare($query);
-        if ($limit !== null) {
-            $stmt->bindParam(":offset", $offset, PDO::PARAM_INT);
-            $stmt->bindParam(":limit", $limit, PDO::PARAM_INT);
-        }
-
-        $stmt->execute();
-        return $stmt->fetchAll(PDO::FETCH_ASSOC);
-    }
-
-    // Count the total number of products in the database.
-    public function countAll() {
-        $query = "SELECT COUNT(*) FROM " . $this->table_name;
-        $stmt = $this->conn->prepare($query);
-        $stmt->execute();
-        return $stmt->fetchColumn();
-    }
-
-    // Get a single product by ID
-    public function getProduct($id) {
-        // Fetch column types dynamically to determine data types.
-        $columnsQuery = "SHOW COLUMNS FROM " . $this->table_name;
-        $columnsStmt = $this->conn->query($columnsQuery);
-        $columns = [];
-        while ($row = $columnsStmt->fetch(PDO::FETCH_ASSOC)) {
-            $columns[$row['Field']] = $row['Type'];
-        }
-
-        // Retrieve product details from the database.
-        $query = "SELECT * FROM " . $this->table_name . " WHERE product_id = ? LIMIT 1";
-        $stmt = $this->conn->prepare($query);
-        $stmt->execute([$id]);
-        $product = $stmt->fetch(PDO::FETCH_ASSOC);
-
-        // If the product is digital, set stock to null.
-        if ($product && $product['isDigital']) {
-            $product['stock'] = null;
-        }
-
-        // Return product data along with column types.
-        return $product ? ['data' => $product, 'types' => $columns] : null;
-    }
-
-    // Insert a new product into the database.
-    public function insertProduct($data) {
-        $query = "INSERT INTO " . $this->table_name . " 
-                  (cardTitle, description, cardText, itemPrice, isDigital, cardID, YTLink, imageSrc, imageAlt, stock)
-                  VALUES (:cardTitle, :description, :cardText, :itemPrice, :isDigital, :cardID, :YTLink, :imageSrc, :imageAlt, :stock)";
-
-        $stmt = $this->conn->prepare($query);
-
-        // Prepare and sanitize inputs.
-        $cardTitle = htmlspecialchars(strip_tags($data['cardTitle']));
-        $description = $data['description'] ?? ''; // Allow HTML
-        $cardText = $data['cardText'] ?? '';
-        $itemPrice = $data['itemPrice'];
-        $isDigital = $data['isDigital'];
-        $cardID = htmlspecialchars(strip_tags($data['cardID']));
-        // Convert the provided YTLink to an embed URL.
-        $YTLink = htmlspecialchars(strip_tags($data['YTLink']));
-        $YTLink = $this->convertToEmbedURL($YTLink);
-        $imageSrc = htmlspecialchars(strip_tags($data['imageSrc']));
-        $imageAlt = htmlspecialchars(strip_tags($data['imageAlt']));
-        $stock = ($isDigital == 1) ? null : $data['stock']; // If digital, stock must be null; otherwise, use provided stock
-
-        // Bind parameters to SQL query.
-        $stmt->bindParam(":cardTitle", $cardTitle);
-        $stmt->bindParam(":description", $description);
-        $stmt->bindParam(":cardText", $cardText);
-        $stmt->bindParam(":itemPrice", $itemPrice);
-        $stmt->bindParam(":isDigital", $isDigital);
-        $stmt->bindParam(":cardID", $cardID);
-        $stmt->bindParam(":YTLink", $YTLink);
-        $stmt->bindParam(":imageSrc", $imageSrc);
-        $stmt->bindParam(":imageAlt", $imageAlt);
-        if (is_null($stock)) {
-            $stmt->bindValue(":stock", null, PDO::PARAM_NULL);
-        } else {
-            $stmt->bindParam(":stock", $stock);
-        }
-
-        // Execute the query and return the last inserted ID if successful.
-        return $stmt->execute() ? $this->conn->lastInsertId() : false;
-    }
-
-    // Update an existing product.
-    public function updateProduct($id, $data) {
-        $query = "UPDATE " . $this->table_name . " 
-                  SET cardTitle = :cardTitle, 
-                      description = :description, 
-                      cardText = :cardText, 
-                      cardID = :cardID,
-                      YTLink = :YTLink,
-                      itemPrice = :itemPrice, 
-                      isDigital = :isDigital, 
-                      imageSrc = :imageSrc, 
-                      imageAlt = :imageAlt, 
-                      stock = :stock
-                  WHERE product_id = :product_id";
-
-        $stmt = $this->conn->prepare($query);
-
-        // Prepare and sanitize inputs.
-        $cardTitle = htmlspecialchars(strip_tags($data['cardTitle']));
-        $description = $data['description'] ?? ''; // Allow HTML
-        $cardText = $data['cardText'] ?? '';
-        $itemPrice = htmlspecialchars(strip_tags($data['itemPrice']));
-        $isDigital = $data['isDigital'];
-        $cardID = htmlspecialchars(strip_tags($data['cardID']));
-        // Convert the provided YTLink to an embed URL.
-        $YTLink = htmlspecialchars(strip_tags($data['YTLink']));
-        $YTLink = $this->convertToEmbedURL($YTLink);
-        $imageSrc = htmlspecialchars(strip_tags($data['imageSrc']));
-        $imageAlt = htmlspecialchars(strip_tags($data['imageAlt']));
-        $stock = ($isDigital == 1) ? null : $data['stock']; // If digital, stock must be null; otherwise, use provided stock
-
-        // Bind parameters to SQL query.
-        $stmt->bindParam(':cardTitle', $cardTitle);
-        $stmt->bindParam(':description', $description);
-        $stmt->bindParam(':cardText', $cardText);
-        $stmt->bindParam(':cardID', $cardID);
-        $stmt->bindParam(':YTLink', $YTLink);
-        $stmt->bindParam(':itemPrice', $itemPrice);
-        $stmt->bindParam(':isDigital', $isDigital);
-        $stmt->bindParam(':imageSrc', $imageSrc);
-        $stmt->bindParam(':imageAlt', $imageAlt);
-        if (is_null($stock)) {
-            $stmt->bindValue(':stock', null, PDO::PARAM_NULL);
-        } else {
-            $stmt->bindParam(':stock', $stock);
-        }
-        $stmt->bindParam(':product_id', $id);
-
-        return $stmt->execute();
-    }
-
-    // Delete a product from the database.
-    public function deleteProduct($id) {
-        $query = "DELETE FROM " . $this->table_name . " WHERE product_id = ?";
-        $stmt = $this->conn->prepare($query);
-        return $stmt->execute([$id]);
-    }
-
-    // Private method to convert a normal YouTube URL to an embed URL.
-    private function convertToEmbedURL($youtubeURL) {
-        $parsedURL = parse_url($youtubeURL);
-        // Check for valid YouTube host
-        if (!isset($parsedURL['host']) || !in_array($parsedURL['host'], ['www.youtube.com', 'youtube.com', 'm.youtube.com', 'youtu.be'])) {
-            return $youtubeURL; // Return original if not valid
-        }
-        // If the URL is in youtu.be format, extract the video ID from the path.
-        if ($parsedURL['host'] === 'youtu.be') {
-            $videoID = ltrim($parsedURL['path'], '/');
-        } else {
-            // For standard YouTube URLs, parse query parameters to get 'v'
-            if (!isset($parsedURL['query'])) {
-                return $youtubeURL;
+    // List all products (returns parsed JSON response).
+    public function listProducts(): array {
+        // GET /tb_products
+        // Example: curl -X GET http://your-domain.com/Class_products.php/all
+        $resp = $this->_makeRequest('', 'GET');
+        $items = [];
+        if (isset($resp['documents'])) {
+            foreach ($resp['documents'] as $doc) {
+                $items[] = $this->_parseFirestoreDocument($doc);
             }
-            parse_str($parsedURL['query'], $queryParams);
-            $videoID = $queryParams['v'] ?? null;
         }
-        if (!$videoID) {
-            return $youtubeURL;
-        }
-        // Construct and return the embed URL with the specified 'si' parameter.
-        return "https://www.youtube.com/embed/" . htmlspecialchars($videoID) . "?si=STe4Z93ENZHn_MAv";
+        return $items;
     }
+
+    // Get a single product by ID (Firestore document ID) (returns parsed JSON response).
+    public function getProduct(string $id) {
+        $productResponse = $this->_makeRequest($id, 'GET');
+        if (isset($productResponse['fields'])) {
+            return $this->_parseFirestoreDocument($productResponse);
+        }
+        return $productResponse;
+    }
+
+    // Insert a new product (sends raw JSON data).
+    public function insertProduct(array $data) {
+        return $this->_makeRequest('', 'POST', $data);
+    }
+
+    // Update an existing product (requires Firestore document ID) (sends raw JSON data).
+    public function updateProduct(string $id, array $data) {
+        return $this->_makeRequest($id, 'PATCH', $data);
+    }
+
+    // Delete a product (requires Firestore document ID).
+    public function deleteProduct(string $id) {
+        return $this->_makeRequest($id, 'DELETE');
+    }
+
+
 }
 
-/// This block processes AJAX requests when this file is accessed directly.
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    // Decode the incoming JSON payload.
-    $input = json_decode(file_get_contents('php://input'), true);
-    // Ensure valid JSON
-    if ($input) {
-        // Check if this is a deletion request.
-        if (isset($input['action']) && $input['action'] === 'delete' && isset($input['product_id'])) {
-            $DB = new Database();
-            $conn = $DB->getConnection();
-            $products = new Products($conn);
-            $success = $products->deleteProduct($input['product_id']);
-            echo json_encode(["success" => $success]);
-            exit;
+// Endpoint handler block for Products, routes requests based on PATH_INFO and HTTP method to output JSON
+if (isset($_SERVER['PATH_INFO'])) {
+    $pathInfo = trim($_SERVER['PATH_INFO'], '/'); // Get the path information from the URL and trim leading/trailing slashes
+    $segments = explode('/', $pathInfo); // Split the path information into an array of segments
+    $method = $_SERVER['REQUEST_METHOD']; // Get the HTTP request method (GET, POST, PUT, DELETE, etc.)
+    $products = new Products(); // Create an instance of the Users class
+    header('Content-Type: application/json'); // Set the Content-Type header to application/json for API responses
+
+    if ($method === 'GET') {
+        if (isset($segments[0]) && $segments[0] === 'product' && isset($segments[1])) {
+            // Example cURL command: curl -X GET http://your-domain.com/Class_products.php/product/some_product_id
+            $productId = $segments[1];
+            $product = $products->getProduct($productId);
+            echo json_encode($product);
+        } elseif (isset($segments[0]) && $segments[0] === 'all') {
+            // Example cURL command: curl -X GET http://your-domain.com/Class_products.php/all
+            $allProducts = $products->listProducts();
+            echo json_encode($allProducts);
+        } else {
+            http_response_code(400);
+            echo json_encode(['error' => 'Invalid GET request']);
         }
-        // Otherwise, check if an 'id' is provided to get a single product.
-        elseif (isset($input['id'])) {
-            $DB = new Database();
-            $conn = $DB->getConnection();
-            $products = new Products($conn);
-            $product = $products->getProduct($input['id']);
-            if ($product && $product !== "null") {
-                echo json_encode(["success" => true, "data" => $product]);
-            } else {
-                http_response_code(404);
-                echo json_encode(["success" => false, "error" => "Connection lost."]);
-            }
-            exit;
+    } elseif ($method === 'POST') {
+        $data = json_decode(file_get_contents('php://input'), true);
+        if (isset($segments[0]) && $segments[0] === 'product') {
+            // Example cURL command: curl -X POST -H "Content-Type: application/json" -d '{"name": "New Product", "price": 25.99}' http://your-domain.com/Class_products.php/product
+            $insertResult = $products->insertProduct($data);
+            echo json_encode($insertResult); // Output the full JSON response
+        } else {
+            http_response_code(400);
+            echo json_encode(['error' => 'Invalid POST request']);
         }
+    } elseif ($method === 'PUT' || $method === 'PATCH') {
+        if (isset($segments[0]) && $segments[0] === 'product' && isset($segments[1])) {
+            // Example cURL command (PUT): curl -X PUT -H "Content-Type: application/json" -d '{"price": 29.99}' http://your-domain.com/Class_products.php/product/some_product_id
+            // Example cURL command (PATCH): curl -X PATCH -H "Content-Type: application/json" -d '{"price": 29.99}' http://your-domain.com/Class_products.php/product/some_product_id
+            $productId = $segments[1];
+            $data = json_decode(file_get_contents('php://input'), true);
+            $updateResult = $products->updateProduct($productId, $data);
+            echo json_encode($updateResult); // Output the full JSON response
+        } else {
+            http_response_code(400);
+            echo json_encode(['error' => 'Invalid PUT/PATCH request']);
+        }
+    } elseif ($method === 'DELETE') {
+        if (isset($segments[0]) && $segments[0] === 'product' && isset($segments[1])) {
+            // Example cURL command: curl -X DELETE http://your-domain.com/Class_products.php/product/some_product_id
+            $productId = $segments[1];
+            $deleteResult = $products->deleteProduct($productId);
+            echo json_encode($deleteResult); // Output the full JSON response
+        } else {
+            http_response_code(400);
+            echo json_encode(['error' => 'Invalid DELETE request']);
+        }
+    } else {
+        http_response_code(405); // Method Not Allowed
+        echo json_encode(['error' => 'Method not allowed']);
     }
 }
 ?>

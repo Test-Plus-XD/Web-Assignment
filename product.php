@@ -1,113 +1,98 @@
-﻿<!DOCTYPE html>
-<html>
-<?php
-// Retrieve the product ID from the GET parameter.
-// To support filename extraction, could check that as a fallback, but dynamic routing typically uses query parameters or URL rewriting.
+﻿<?php
+// Retrieve the product ID from the URL query parameter.
 $productId = $_GET['id'] ?? null;
 if (!$productId) {
-    die("Error: Product ID not specified.");
+     http_response_code(400); // Bad Request
+     die("Error: Product ID not specified in the URL.");
 }
 
-// Prepare a JSON payload with the product ID.
-$postData = json_encode(["id" => $productId]);
-
-/* file_get_contents() Version
-// Set up the HTTP context for a POST request with JSON.
-$options = [
-    "http" => [
-        "header"  => "Content-Type: application/json\r\n",
-        "method"  => "POST",
-        "content" => $postData
-    ]
-];
-// Send the POST request to Class_products.php and capture the JSON response.
-// Has to be absolute path
-$response = file_get_contents("http://localhost/Web%20Assignment/Class_products.php", false, stream_context_create($options));
-*/
+// Construct the URL to fetch the specific product from Class_products.php
+$apiUrl = "http://localhost/Web%20Assignment/Class_products.php/product/" . urlencode($productId);
 
 // Initialize cURL session
-$ch = curl_init("http://localhost/Web%20Assignment/Class_products.php");
-// Set cURL options
+$ch = curl_init($apiUrl);
+
+// Set cURL options for a GET request
 curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-curl_setopt($ch, CURLOPT_POST, true);
-curl_setopt($ch, CURLOPT_HTTPHEADER, ["Content-Type: application/json"]);
-curl_setopt($ch, CURLOPT_POSTFIELDS, $postData);
+curl_setopt($ch, CURLOPT_HTTPGET, true); // Use HTTP GET method
+curl_setopt($ch, CURLOPT_HTTPHEADER, ["Content-Type: application/json"]); // Good practice to set, though not strictly needed for GET
+
 // Execute cURL request and capture response
 $response = curl_exec($ch);
+
 // Check for cURL errors
 if ($response === false) {
-    die("Error: cURL request failed - " . curl_error($ch));
+    error_log("cURL request failed for product ID " . $productId . ": " . curl_error($ch));
+    http_response_code(500); // Internal Server Error
+    die("Error: Failed to fetch product data.");
 }
+
+// Get HTTP status code
+$httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
 // Close cURL session
 curl_close($ch);
 
-$data = json_decode($response, true);
+// Decode the JSON response
+$product = json_decode($response, true);
 
-// Check if the request was successful.
-if (!$data) {
-    $errorMessage = $data["error"] ?? "Product not found.";
-    http_response_code(404);
-    die("Error: " . $errorMessage);
-} elseif (!$data["success"]) {
-	$errorMessage = $data["error"] ?? "Product NULL.";
+// Check if the request was successful (2xx status) and product data was found
+if ($httpCode < 200 || $httpCode >= 300 || !$product || (isset($product['error']) && $product['error'])) {
+    error_log("Error fetching product ID " . $productId . ". HTTP Status: " . $httpCode . ", Response: " . ($response ? $response : 'No response body'));
+    http_response_code($httpCode >= 400 ? $httpCode : 404); // Use actual status if >= 400, else 404
+    die("Error: Product not found or failed to retrieve data.");
 }
 
-// Retrieve the product data.
-// Assuming that getProductJSON() returns a JSON that, when decoded, contains an array similar to the output of getProduct(), e.g. ['data' => [ ... product fields ... ], 'types' => [ ... ] ]
-$productData = $data["data"];
-// For convenience, extract the product details stored under a "data" key.
-$product = isset($productData["data"]) ? $productData["data"] : $productData;
-//$product = $data["data"];
-
-// Set the page title and CSS file based on the product details.
-$pageTitle = $product['cardTitle'];
+// Set the page title based on the product details.
+$pageTitle = $product['cardTitle'] ?? 'Product Details';
 $pageCSS = 'product.css';
-
-// Include the head.php file which should use $pageTitle and $pageCSS.
-include 'head.php';
+include_once 'head.php';
 ?>
 <body style="font-family:Zen Maru Gothic">
     <main class="product_main">
         <div class="container-fluid">
-            <!-- First Row: Video and Product Info -->
             <div class="row">
-                <!-- Left 75%: YouTube Video Embed -->
                 <div class="col-lg-9 col-md-9 col-sm-12">
-                    <div class="ratio ratio-16x9"><!--https://www.youtube.com/embed/-->
-                        <iframe src="<?= htmlspecialchars($product['YTLink']) ?>" title="YouTube video" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+                    <div class="ratio ratio-16x9">
+                         <iframe id="product-yt-link" src="" title="YouTube video" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
                     </div>
                 </div>
-                <!-- Right 25%: Product Title, Image, and Card Text -->
                 <div class="col-lg-3 col-md-3 col-sm-12 d-flex flex-column justify-content-between">
-                    <!-- Top: Card Title -->
                     <div>
-                        <h2><strong><?= htmlspecialchars($product['cardTitle']) ?></strong></h2>
+                         <h2><strong id="product-title"></strong></h2>
                     </div>
-                    <!-- Middle: Product Image -->
                     <div class="my-2 text-center">
-                        <img src="<?= htmlspecialchars($product['imageSrc']) ?>" alt="<?= htmlspecialchars($product['imageAlt']) ?>" class="img-fluid">
+                         <img id="product-image" src="" alt="" class="img-fluid">
                     </div>
-                    <!-- Bottom: Card Text -->
                     <div>
-                        <p><?= htmlspecialchars($product['cardText']) ?></p>
+                         <p id="product-card-text"></p>
                     </div>
                 </div>
             </div>
-            <!-- Second Row: Add to Cart Button -->
             <div class="row mt-4">
                 <div class="col-12 text-center">
-                    <button id="add-to-cart" class="btn btn-success" data-product-id="<?= htmlspecialchars($product['product_id']) ?>">Add to cart</button>
+                <div class="col-12 text-center">
+                    <button id="add-to-cart" class="btn btn-success" 
+                        data-product-id="<?= htmlspecialchars($productId) ?>"
+                        data-user-id="<?php echo htmlspecialchars($_SESSION['user_id'] ?? ''); ?>"
+                        data-session-id="<?php echo htmlspecialchars(session_id() ?? ''); ?>">
+                        Add to cart</button>
+                    </div>
                 </div>
             </div>
-            <!-- Third Row: Product Description -->
             <div class="row mt-4">
                 <div class="col-12">
-                    <p><?= $product['description'] ?></p>
+                    <p id="product-description"></p>
                 </div>
             </div>
         </div>
     </main>
     <?php include 'footer.php'; ?>
+
+    <script>
+        window.productData = <?php echo json_encode($product); ?>;
+        console.log("Product data echoed to JavaScript:", window.productData);
+    </script>
+
     <script src="src/js/cart_button.js" defer></script>
 </body>
 </html>

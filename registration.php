@@ -32,9 +32,6 @@ ini_set('display_errors', 0);
 ?>
 
 <body style="">
-    
-    
-
  <form action="Class_account.php" method="post">
   <div class="container">
     <h1>Register</h1>

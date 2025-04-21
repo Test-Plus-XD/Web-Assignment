@@ -1,24 +1,21 @@
-const {
-    sentryWebpackPlugin
-} = require("@sentry/webpack-plugin");
+import { sentryWebpackPlugin } from '@sentry/webpack-plugin';
+import { fileURLToPath } from 'url';
+import path from 'path';
 
-const {
-    sentryWebpackPlugin
-} = require("@sentry/webpack-plugin");
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
-const path = require("path");
-
-module.exports = {
+export default {
     // Main file
-    entry: "./src/js/index.js",
+    entry: './src/js/index.js',
 
     output: {
-        filename: "bundle.js", // Output file name
-        path: path.resolve(__dirname, "dist"), // Output directory
+        filename: 'bundle.js', // Output file name
+        path: path.resolve(__dirname, 'dist') // Output  __dirname directory
     },
 
     // Change to "production" for optimized builds
-    mode: "development",
+    mode: 'development',
 
     experiments: {
         topLevelAwait: true // Enable top-level await (for Firebase modules)
@@ -34,21 +31,24 @@ module.exports = {
                 test: /\.js$/, // Apply this rule to JS files
                 exclude: /node_modules/, // Ignore dependencies
                 use: {
-                    loader: "babel-loader", // Transpile ES6+ code
+                    loader: 'babel-loader', // Transpile ES6+ code
                 },
             },
         ],
     },
 
-    devtool: "source-map",
+    devtool: 'source-map',
 
-    plugins: [sentryWebpackPlugin({
-        authToken: process.env.SENTRY_AUTH_TOKEN,
-        org: "test-plus",
-        project: "js-web-assignment"
-    }), sentryWebpackPlugin({
-        authToken: process.env.SENTRY_AUTH_TOKEN,
-        org: "test-plus",
-        project: "php-web-assignment"
-    })]
+    plugins: [
+        sentryWebpackPlugin({ // Use it as a function call
+            authToken: process.env.SENTRY_AUTH_TOKEN,
+            org: 'test-plus',
+            project: 'js-web-assignment'
+        }),
+        sentryWebpackPlugin({ // Use it as a function call
+            authToken: process.env.SENTRY_AUTH_TOKEN,
+            org: 'test-plus',
+            project: 'php-web-assignment'
+        })
+    ]
 };

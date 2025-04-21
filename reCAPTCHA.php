@@ -1,9 +1,20 @@
 <?php
+// Required to store reCAPTCHA result globally across pages
+if (session_status() === PHP_SESSION_NONE) session_start();
 // Set the Content-Type header to JSON.
 header('Content-Type: application/json');
-// Your reCAPTCHA secret key
+
+// Only allow POST requests
+if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+    http_response_code(405); // Method Not Allowed
+    echo json_encode(["success" => false, "error" => "Invalid request method. POST required."]);
+    exit;
+}
+
+// Your secret reCAPTCHA key (from Google Console)
 $secretKey = '6Left_4qAAAAAJoPcX2VF4aAZbQhVlJDLv8A9YJZ';
-// Retrieve the token from the POST data.
+
+// Get token from POST data
 $token = $_POST['g-recaptcha-response'] ?? '';
 
 if (empty($token)) {
@@ -12,32 +23,52 @@ if (empty($token)) {
     exit;
 }
 
-// Build the URL for verification.
-$verifyUrl = "https://www.google.com/recaptcha/api/siteverify?secret=" . urlencode($secretKey) . "&response=" . urlencode($token);
+// Construct the API request to Google's reCAPTCHA endpoint
+$verifyUrl = 'https://www.google.com/recaptcha/api/siteverify';
+$postData = http_build_query([
+    'secret' => $secretKey,
+    'response' => $token
+]);
 
-// Send the request to Google's verification endpoint.
-// Consider using curl for more robust error handling
-$verifyResponse = @file_get_contents($verifyUrl);
+// Use cURL instead of file_get_contents for better control
+$ch = curl_init($verifyUrl);
+curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+curl_setopt($ch, CURLOPT_POSTFIELDS, $postData);
+curl_setopt($ch, CURLOPT_CAINFO, __DIR__ . '/cacert.pem');
+$verifyResponse = curl_exec($ch);
+$curlError = curl_error($ch);
+curl_close($ch);
 
+// If request failed entirely
 if ($verifyResponse === false) {
-    http_response_code(500); // Internal Server Error
-    echo json_encode(["success" => false, "error" => "Failed to connect to reCAPTCHA server."]);
+    http_response_code(500);
+    echo json_encode(["success" => false, "error" => "Verification request failed.", "curlError" => $curlError]);
     exit;
 }
 
+// Decode Google's response
 $verificationData = json_decode($verifyResponse, true);
 
-// For debugging, you can also include your debug token.
+// Optional debug token for testing
 $debugToken = '913A6B2B-FDCB-464A-B69E-BFEF50736A2C';
 
-// Check if the verification succeeded with an acceptable score and matching action.
-if ($verificationData["success"] &&
-    isset($verificationData["score"]) && $verificationData["score"] >= 0.05 && // Increased score threshold for better security
-    isset($verificationData["action"]) && $verificationData["action"] === "login") 
-    {
-    echo json_encode(["success" => true, "message" => "reCAPTCHA verification passed.", "debugToken" => $debugToken]);
+// If reCAPTCHA passed
+if (!empty($verificationData['success']) && $verificationData['success'] === true) {
+    $_SESSION['recaptcha_verified'] = true; // Save verification globally
+    $_SESSION['recaptcha_verified_time'] = time(); // Store current time
+    echo json_encode([
+        "success" => true,
+        "message" => "reCAPTCHA verification passed.",
+        "debugToken" => $debugToken,
+        "details" => $verificationData
+    ]);
 } else {
+    $_SESSION['recaptcha_verified'] = false; // Explicitly mark failure
     http_response_code(400);
-    echo json_encode(["success" => false, "error" => "reCAPTCHA verification failed.", "details" => $verificationData]);
+    echo json_encode([
+        "success" => false,
+        "error" => "reCAPTCHA verification failed.",
+        "details" => $verificationData
+    ]);
 }
 ?>

@@ -4,10 +4,7 @@
 $pageTitle = 'Payment Completed';
 $pageCSS = 'search.css';
 require_once 'head.php';
-
-ini_set('display_errors', 0);
-ini_set('display_startup_errors', 0);
-error_reporting(E_ERROR);
+$Stripe_session = $_GET['session_id'] ?? Null;
 ?>
 <body>
     <!--<php include_once 'payment_email.php'; ?>-->
@@ -15,23 +12,31 @@ error_reporting(E_ERROR);
         <div class="container" style="text-align:center;margin-top:5vh;">
             <h2>Payment Complete!</h2>
             <br>
-            <h3>Thank you for your purchase. <!--Below are the items you bought:--></h3>
-            <br>
-            <h4>You can check your Library for the items you bought.</h4>
+            <h3>Thank you for purchasing. These are the items you bought:</h3>
             <br>
             <!-- Display Items Purchased -->
-            <div class="row">
-                <?php
-
-                ?>
-            </div>
-            <!-- Print Button -->
+            <div class="row d-flex justify-content-evenly" id="bought-products"></div>
+            <br>
+            <h4>
+            <?php
+            date_default_timezone_set('Asia/Hong_Kong');
+            echo "Purchase Date: " . date("j F Y, g:i A");
+            echo "<br>";
+            echo "Purchase Session: " . $Stripe_session;
+            echo "<br>";
+            echo $_SESSION['user_id'];
+            ?>
+            </h4>
+            <br>
             <button class="btn btn-info" onclick="window.location.href='library.php';">Go To Your Library</button>
+            <!-- Print Button -->
             <button class="btn btn-primary" onclick="window.print()">Print Receipt</button>
         </div>
     </main>
 
     <?php require_once 'footer.php'; ?>
-    <script src="src/js/payment.js" defer></script>
+    <script src="src/js/cart.js"></script>
+    <script src="src/js/cart_button.js"></script>
+    <script src="src/js/payment_completed.js" defer></script>
 </body>
 </html>

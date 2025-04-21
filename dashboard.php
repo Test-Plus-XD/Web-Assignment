@@ -42,7 +42,7 @@
                         <div id="collapseReport" class="accordion-collapse collapse" aria-labelledby="headingReport" data-bs-parent="#sidebarAccordion">
                             <div class="accordion-body">
                                 <ul class="sidebar-list">
-                                    <li><button type="button" class="sidebar-link sidebar-submenu" onclick="window.location.href='dashboard.php?content=all_owned_products';"><i class="bi bi-file-earmark-ruled"></i></i>&nbsp; Purchase Records</a></li>
+                                    <li><button type="button" class="sidebar-link sidebar-submenu" onclick="window.location.href='dashboard.php?content=all_purchases';"><i class="bi bi-file-earmark-ruled"></i></i>&nbsp; Purchase Records</a></li>
                                     <li><button type="button" class="sidebar-link sidebar-submenu" onclick="window.location.href='dashboard.php?content=profit';"><i class="bi bi-cash-coin"></i>&nbsp; Profit</a></li>
                                     <li><button type="button" class="sidebar-link sidebar-submenu" onclick="window.location.href='dashboard.php?content=stock';"><i class="bi bi-box-seam-fill"></i>&nbsp; Stock</a></li>
                                 </ul>

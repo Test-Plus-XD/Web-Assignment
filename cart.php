@@ -15,15 +15,15 @@ if (!isset($_SESSION["isLogin"]) || $_SESSION["isLogin"] !== true) {
         <div class="cart-container container">  
             <h2>Your Cart</h2>  
             <div class="row d-flex justify-content-evenly">
-                <div id="cart-items">
+                <div id="cart-items" style="display: flex; justify-content: center;">
                     <!-- Dynamic content will be rendered here -->
                 </div>
-                <button type="button" class="btn btn-info" onclick="window.location.href='payment.php';">Pay Now</button>
+                <div id="cart-total" style="width=100%; display: flex; justify-content: center;"></div>
+                <button id="checkoutButton" class="btn btn-info" style="width=100%">Proceed to Payment</button>
             </div>
         </div>  
     </main>
-
     <?php require_once 'footer.php'; ?>
-    <script src="src/js/cart.js"></script>
+    <script src="src/js/cart.js" defer></script>
 </body>
 </html>

@@ -1,4 +1,4 @@
-﻿<footer class="footer">
+﻿<footer class="footer bottom-0 start-0 end-0 text-white">
     <hr style="box-shadow: 0 1px 10px rgba(0, 0, 0, 0.9);margin:auto;padding:1px;height:1px;width:99%;border-width:1;color:aliceblue;background-color:whitesmoke">
     <div class="container p-2">
         <div class="row my-2">

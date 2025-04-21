@@ -1,0 +1,22 @@
+<html>
+<body>
+    <p>ReCaptcha Test</p>
+
+    <div id="recaptcha"></div>
+
+    <script src="https://www.google.com/recaptcha/api.js?onload=recaptchaCallback&render=explicit&hl=tw" async defer></script>
+
+    <script type="text/javascript">
+      var recaptchaCallback = function () {
+        console.log('recaptcha is ready'); // showing
+        grecaptcha.render("recaptcha", {
+            sitekey: '6Left_4qAAAAAGSyUGZfW4CPtYlVch3kqI5NWR6X',
+            callback: function () {
+                console.log('recaptcha callback');
+            }
+        });
+      }
+    </script>
+
+</body>
+</html>
