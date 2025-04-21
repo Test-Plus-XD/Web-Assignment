@@ -16,6 +16,7 @@ class ComposerStaticInit851a34b69a3a07e84c08321aa992a38a
         'S' => 
         array (
             'Symfony\\Component\\OptionsResolver\\' => 34,
+            'Stripe\\' => 7,
             'Sentry\\' => 7,
         ),
         'P' => 
@@ -37,6 +38,10 @@ class ComposerStaticInit851a34b69a3a07e84c08321aa992a38a
         'Symfony\\Component\\OptionsResolver\\' => 
         array (
             0 => __DIR__ . '/..' . '/symfony/options-resolver',
+        ),
+        'Stripe\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/stripe/stripe-php/lib',
         ),
         'Sentry\\' => 
         array (

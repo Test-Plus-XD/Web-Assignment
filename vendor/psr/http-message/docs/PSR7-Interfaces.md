@@ -17,7 +17,7 @@ The interfaces defined in PSR-7 are the following:
 ## `Psr\Http\Message\MessageInterface` Methods
 
 | Method Name                        | Description | Notes |
-|------------------------------------| ----------- | ----- |
+|------------------------------------|-------- |-- |
 | `getProtocolVersion()`             | Retrieve HTTP protocol version          |  1.0 or 1.1 |
 | `withProtocolVersion($version)`    | Returns new message instance with given HTTP protocol version          |      |
 | `getHeaders()`                     | Retrieve all HTTP Headers               | [Request Header List](https://en.wikipedia.org/wiki/List_of_HTTP_header_fields#Request_fields), [Response Header List](https://en.wikipedia.org/wiki/List_of_HTTP_header_fields#Response_fields)      |
@@ -36,7 +36,7 @@ The interfaces defined in PSR-7 are the following:
 Same methods as `Psr\Http\Message\MessageInterface`  + the following methods:
 
 | Method Name                        | Description | Notes |
-|------------------------------------| ----------- | ----- |
+|------------------------------------|-------- |-- |
 | `getRequestTarget()`                | Retrieves the message's request target              | origin-form, absolute-form, authority-form, asterisk-form ([RFC7230](https://www.rfc-editor.org/rfc/rfc7230.txt)) |
 | `withRequestTarget($requestTarget)` | Return a new message instance with the specific request-target |      |
 | `getMethod()`                       | Retrieves the HTTP method of the request.  |  GET, HEAD, POST, PUT, DELETE, CONNECT, OPTIONS, TRACE (defined in [RFC7231](https://tools.ietf.org/html/rfc7231)), PATCH (defined in [RFC5789](https://tools.ietf.org/html/rfc5789)) |
@@ -50,7 +50,7 @@ Same methods as `Psr\Http\Message\MessageInterface`  + the following methods:
 Same methods as `Psr\Http\Message\RequestInterface`  + the following methods:
 
 | Method Name                        | Description | Notes |
-|------------------------------------| ----------- | ----- |
+|------------------------------------|-------- |-- |
 | `getServerParams() `               | Retrieve server parameters  | Typically derived from `$_SERVER`  |
 | `getCookieParams()`                | Retrieves cookies sent by the client to the server. | Typically derived from `$_COOKIES` |
 | `withCookieParams(array $cookies)` |  Returns a new request instance with the specified cookies      |   | 
@@ -69,7 +69,7 @@ Same methods as `Psr\Http\Message\RequestInterface`  + the following methods:
 Same methods as `Psr\Http\Message\MessageInterface`  + the following methods:
 
 | Method Name                        | Description | Notes |
-|------------------------------------| ----------- | ----- |
+|------------------------------------|-------- |-- |
 | `getStatusCode()` | Gets the response status code. | |
 | `withStatus($code, $reasonPhrase = '')` | Returns a new response instance with the specified status code and, optionally, reason phrase. | |
 | `getReasonPhrase()` | Gets the response reason phrase associated with the status code. | |
@@ -77,7 +77,7 @@ Same methods as `Psr\Http\Message\MessageInterface`  + the following methods:
 ##  `Psr\Http\Message\StreamInterface` Methods
 
 | Method Name                        | Description | Notes |
-|------------------------------------| ----------- | ----- |
+|------------------------------------|-------- |-- |
 | `__toString()` | Reads all data from the stream into a string, from the beginning to end. | |
 | `close()` | Closes the stream and any underlying resources. | |
 | `detach()` | Separates any underlying resources from the stream. | |
@@ -96,7 +96,7 @@ Same methods as `Psr\Http\Message\MessageInterface`  + the following methods:
 ## `Psr\Http\Message\UriInterface` Methods
 
 | Method Name                        | Description | Notes |
-|------------------------------------| ----------- | ----- |
+|------------------------------------|-------- |-- |
 | `getScheme()` | Retrieve the scheme component of the URI. | |
 | `getAuthority()` | Retrieve the authority component of the URI. | |
 | `getUserInfo()` | Retrieve the user information component of the URI. | |
@@ -117,7 +117,7 @@ Same methods as `Psr\Http\Message\MessageInterface`  + the following methods:
 ## `Psr\Http\Message\UploadedFileInterface` Methods
 
 | Method Name                        | Description | Notes |
-|------------------------------------| ----------- | ----- |
+|------------------------------------|-------- |-- |
 | `getStream()` | Retrieve a stream representing the uploaded file. | |
 | `moveTo($targetPath)` | Move the uploaded file to a new location. | |
 | `getSize()` | Retrieve the file size. | |

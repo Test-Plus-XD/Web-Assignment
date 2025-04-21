@@ -27,7 +27,7 @@ final class UriNormalizer
         self::REMOVE_DOT_SEGMENTS;
 
     /**
-     * All letters within a percent-encoding triplet (e.g., "%3A") are case-insensitive, and should be capitalized.
+     * All letters within a percent-encoding triplet (e.g., "%3A") are case-insensitive, and should be capitalised.
      *
      * Example: http://example.org/a%c2%b1b → http://example.org/a%C2%B1b
      */
