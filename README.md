@@ -4,7 +4,7 @@
 <br> Firebase OAuthentication + Firestore
 <br> Google Gemini + reCAPTCHA
 <br> Stripe
-<br> Node.js modules and Composer SDK
-<br> Admin Account for testing
-<br> [Account: Test Password: password]
-<br> ^Outdated
+<br> ipdata
+<br> Chart.js
+<br> Node.js modules
+<be> Composer SDK
