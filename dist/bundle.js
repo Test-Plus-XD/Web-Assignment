@@ -1,97 +1,11 @@
-/*
- * ATTENTION: The "eval" devtool has been used (maybe by default in mode: "development").
- * This devtool is neither made for production nor for readable output files.
- * It uses "eval()" calls to create a separate source file in the browser devtools.
- * If you are trying to read the output file, select a different devtool (https://webpack.js.org/configuration/devtool/)
- * or disable the default devtool with "devtool: false".
- * If you are looking for production-ready output files, see mode: "production" (https://webpack.js.org/configuration/mode/).
- */
+;{try{let e="undefined"!=typeof window?window:"undefined"!=typeof global?global:"undefined"!=typeof globalThis?globalThis:"undefined"!=typeof self?self:{},n=(new e.Error).stack;n&&(e._sentryDebugIds=e._sentryDebugIds||{},e._sentryDebugIds[n]="06d791d7-7a6e-4e3e-a77d-6c45f1229b5a",e._sentryDebugIdIdentifier="sentry-dbid-06d791d7-7a6e-4e3e-a77d-6c45f1229b5a")}catch(e){}};
+;{try{let e="undefined"!=typeof window?window:"undefined"!=typeof global?global:"undefined"!=typeof globalThis?globalThis:"undefined"!=typeof self?self:{},n=(new e.Error).stack;n&&(e._sentryDebugIds=e._sentryDebugIds||{},e._sentryDebugIds[n]="06d791d7-7a6e-4e3e-a77d-6c45f1229b5a",e._sentryDebugIdIdentifier="sentry-dbid-06d791d7-7a6e-4e3e-a77d-6c45f1229b5a")}catch(e){}};
 /******/ (() => { // webpackBootstrap
-/******/ 	var __webpack_modules__ = ({
-
-/***/ "./src/js/firebase.js":
-/*!****************************!*\
-  !*** ./src/js/firebase.js ***!
-  \****************************/
-/***/ ((__unused_webpack_module, __unused_webpack_exports, __webpack_require__) => {
-
-eval("function _typeof(o) { \"@babel/helpers - typeof\"; return _typeof = \"function\" == typeof Symbol && \"symbol\" == typeof Symbol.iterator ? function (o) { return typeof o; } : function (o) { return o && \"function\" == typeof Symbol && o.constructor === Symbol && o !== Symbol.prototype ? \"symbol\" : typeof o; }, _typeof(o); }\nfunction _regeneratorRuntime() { \"use strict\"; /*! regenerator-runtime -- Copyright (c) 2014-present, Facebook, Inc. -- license (MIT): https://github.com/facebook/regenerator/blob/main/LICENSE */ _regeneratorRuntime = function _regeneratorRuntime() { return e; }; var t, e = {}, r = Object.prototype, n = r.hasOwnProperty, o = Object.defineProperty || function (t, e, r) { t[e] = r.value; }, i = \"function\" == typeof Symbol ? Symbol : {}, a = i.iterator || \"@@iterator\", c = i.asyncIterator || \"@@asyncIterator\", u = i.toStringTag || \"@@toStringTag\"; function define(t, e, r) { return Object.defineProperty(t, e, { value: r, enumerable: !0, configurable: !0, writable: !0 }), t[e]; } try { define({}, \"\"); } catch (t) { define = function define(t, e, r) { return t[e] = r; }; } function wrap(t, e, r, n) { var i = e && e.prototype instanceof Generator ? e : Generator, a = Object.create(i.prototype), c = new Context(n || []); return o(a, \"_invoke\", { value: makeInvokeMethod(t, r, c) }), a; } function tryCatch(t, e, r) { try { return { type: \"normal\", arg: t.call(e, r) }; } catch (t) { return { type: \"throw\", arg: t }; } } e.wrap = wrap; var h = \"suspendedStart\", l = \"suspendedYield\", f = \"executing\", s = \"completed\", y = {}; function Generator() {} function GeneratorFunction() {} function GeneratorFunctionPrototype() {} var p = {}; define(p, a, function () { return this; }); var d = Object.getPrototypeOf, v = d && d(d(values([]))); v && v !== r && n.call(v, a) && (p = v); var g = GeneratorFunctionPrototype.prototype = Generator.prototype = Object.create(p); function defineIteratorMethods(t) { [\"next\", \"throw\", \"return\"].forEach(function (e) { define(t, e, function (t) { return this._invoke(e, t); }); }); } function AsyncIterator(t, e) { function invoke(r, o, i, a) { var c = tryCatch(t[r], t, o); if (\"throw\" !== c.type) { var u = c.arg, h = u.value; return h && \"object\" == _typeof(h) && n.call(h, \"__await\") ? e.resolve(h.__await).then(function (t) { invoke(\"next\", t, i, a); }, function (t) { invoke(\"throw\", t, i, a); }) : e.resolve(h).then(function (t) { u.value = t, i(u); }, function (t) { return invoke(\"throw\", t, i, a); }); } a(c.arg); } var r; o(this, \"_invoke\", { value: function value(t, n) { function callInvokeWithMethodAndArg() { return new e(function (e, r) { invoke(t, n, e, r); }); } return r = r ? r.then(callInvokeWithMethodAndArg, callInvokeWithMethodAndArg) : callInvokeWithMethodAndArg(); } }); } function makeInvokeMethod(e, r, n) { var o = h; return function (i, a) { if (o === f) throw Error(\"Generator is already running\"); if (o === s) { if (\"throw\" === i) throw a; return { value: t, done: !0 }; } for (n.method = i, n.arg = a;;) { var c = n.delegate; if (c) { var u = maybeInvokeDelegate(c, n); if (u) { if (u === y) continue; return u; } } if (\"next\" === n.method) n.sent = n._sent = n.arg;else if (\"throw\" === n.method) { if (o === h) throw o = s, n.arg; n.dispatchException(n.arg); } else \"return\" === n.method && n.abrupt(\"return\", n.arg); o = f; var p = tryCatch(e, r, n); if (\"normal\" === p.type) { if (o = n.done ? s : l, p.arg === y) continue; return { value: p.arg, done: n.done }; } \"throw\" === p.type && (o = s, n.method = \"throw\", n.arg = p.arg); } }; } function maybeInvokeDelegate(e, r) { var n = r.method, o = e.iterator[n]; if (o === t) return r.delegate = null, \"throw\" === n && e.iterator[\"return\"] && (r.method = \"return\", r.arg = t, maybeInvokeDelegate(e, r), \"throw\" === r.method) || \"return\" !== n && (r.method = \"throw\", r.arg = new TypeError(\"The iterator does not provide a '\" + n + \"' method\")), y; var i = tryCatch(o, e.iterator, r.arg); if (\"throw\" === i.type) return r.method = \"throw\", r.arg = i.arg, r.delegate = null, y; var a = i.arg; return a ? a.done ? (r[e.resultName] = a.value, r.next = e.nextLoc, \"return\" !== r.method && (r.method = \"next\", r.arg = t), r.delegate = null, y) : a : (r.method = \"throw\", r.arg = new TypeError(\"iterator result is not an object\"), r.delegate = null, y); } function pushTryEntry(t) { var e = { tryLoc: t[0] }; 1 in t && (e.catchLoc = t[1]), 2 in t && (e.finallyLoc = t[2], e.afterLoc = t[3]), this.tryEntries.push(e); } function resetTryEntry(t) { var e = t.completion || {}; e.type = \"normal\", delete e.arg, t.completion = e; } function Context(t) { this.tryEntries = [{ tryLoc: \"root\" }], t.forEach(pushTryEntry, this), this.reset(!0); } function values(e) { if (e || \"\" === e) { var r = e[a]; if (r) return r.call(e); if (\"function\" == typeof e.next) return e; if (!isNaN(e.length)) { var o = -1, i = function next() { for (; ++o < e.length;) if (n.call(e, o)) return next.value = e[o], next.done = !1, next; return next.value = t, next.done = !0, next; }; return i.next = i; } } throw new TypeError(_typeof(e) + \" is not iterable\"); } return GeneratorFunction.prototype = GeneratorFunctionPrototype, o(g, \"constructor\", { value: GeneratorFunctionPrototype, configurable: !0 }), o(GeneratorFunctionPrototype, \"constructor\", { value: GeneratorFunction, configurable: !0 }), GeneratorFunction.displayName = define(GeneratorFunctionPrototype, u, \"GeneratorFunction\"), e.isGeneratorFunction = function (t) { var e = \"function\" == typeof t && t.constructor; return !!e && (e === GeneratorFunction || \"GeneratorFunction\" === (e.displayName || e.name)); }, e.mark = function (t) { return Object.setPrototypeOf ? Object.setPrototypeOf(t, GeneratorFunctionPrototype) : (t.__proto__ = GeneratorFunctionPrototype, define(t, u, \"GeneratorFunction\")), t.prototype = Object.create(g), t; }, e.awrap = function (t) { return { __await: t }; }, defineIteratorMethods(AsyncIterator.prototype), define(AsyncIterator.prototype, c, function () { return this; }), e.AsyncIterator = AsyncIterator, e.async = function (t, r, n, o, i) { void 0 === i && (i = Promise); var a = new AsyncIterator(wrap(t, r, n, o), i); return e.isGeneratorFunction(r) ? a : a.next().then(function (t) { return t.done ? t.value : a.next(); }); }, defineIteratorMethods(g), define(g, u, \"Generator\"), define(g, a, function () { return this; }), define(g, \"toString\", function () { return \"[object Generator]\"; }), e.keys = function (t) { var e = Object(t), r = []; for (var n in e) r.push(n); return r.reverse(), function next() { for (; r.length;) { var t = r.pop(); if (t in e) return next.value = t, next.done = !1, next; } return next.done = !0, next; }; }, e.values = values, Context.prototype = { constructor: Context, reset: function reset(e) { if (this.prev = 0, this.next = 0, this.sent = this._sent = t, this.done = !1, this.delegate = null, this.method = \"next\", this.arg = t, this.tryEntries.forEach(resetTryEntry), !e) for (var r in this) \"t\" === r.charAt(0) && n.call(this, r) && !isNaN(+r.slice(1)) && (this[r] = t); }, stop: function stop() { this.done = !0; var t = this.tryEntries[0].completion; if (\"throw\" === t.type) throw t.arg; return this.rval; }, dispatchException: function dispatchException(e) { if (this.done) throw e; var r = this; function handle(n, o) { return a.type = \"throw\", a.arg = e, r.next = n, o && (r.method = \"next\", r.arg = t), !!o; } for (var o = this.tryEntries.length - 1; o >= 0; --o) { var i = this.tryEntries[o], a = i.completion; if (\"root\" === i.tryLoc) return handle(\"end\"); if (i.tryLoc <= this.prev) { var c = n.call(i, \"catchLoc\"), u = n.call(i, \"finallyLoc\"); if (c && u) { if (this.prev < i.catchLoc) return handle(i.catchLoc, !0); if (this.prev < i.finallyLoc) return handle(i.finallyLoc); } else if (c) { if (this.prev < i.catchLoc) return handle(i.catchLoc, !0); } else { if (!u) throw Error(\"try statement without catch or finally\"); if (this.prev < i.finallyLoc) return handle(i.finallyLoc); } } } }, abrupt: function abrupt(t, e) { for (var r = this.tryEntries.length - 1; r >= 0; --r) { var o = this.tryEntries[r]; if (o.tryLoc <= this.prev && n.call(o, \"finallyLoc\") && this.prev < o.finallyLoc) { var i = o; break; } } i && (\"break\" === t || \"continue\" === t) && i.tryLoc <= e && e <= i.finallyLoc && (i = null); var a = i ? i.completion : {}; return a.type = t, a.arg = e, i ? (this.method = \"next\", this.next = i.finallyLoc, y) : this.complete(a); }, complete: function complete(t, e) { if (\"throw\" === t.type) throw t.arg; return \"break\" === t.type || \"continue\" === t.type ? this.next = t.arg : \"return\" === t.type ? (this.rval = this.arg = t.arg, this.method = \"return\", this.next = \"end\") : \"normal\" === t.type && e && (this.next = e), y; }, finish: function finish(t) { for (var e = this.tryEntries.length - 1; e >= 0; --e) { var r = this.tryEntries[e]; if (r.finallyLoc === t) return this.complete(r.completion, r.afterLoc), resetTryEntry(r), y; } }, \"catch\": function _catch(t) { for (var e = this.tryEntries.length - 1; e >= 0; --e) { var r = this.tryEntries[e]; if (r.tryLoc === t) { var n = r.completion; if (\"throw\" === n.type) { var o = n.arg; resetTryEntry(r); } return o; } } throw Error(\"illegal catch attempt\"); }, delegateYield: function delegateYield(e, r, n) { return this.delegate = { iterator: values(e), resultName: r, nextLoc: n }, \"next\" === this.method && (this.arg = t), y; } }, e; }\nfunction asyncGeneratorStep(n, t, e, r, o, a, c) { try { var i = n[a](c), u = i.value; } catch (n) { return void e(n); } i.done ? t(u) : Promise.resolve(u).then(r, o); }\nfunction _asyncToGenerator(n) { return function () { var t = this, e = arguments; return new Promise(function (r, o) { var a = n.apply(t, e); function _next(n) { asyncGeneratorStep(a, r, o, _next, _throw, \"next\", n); } function _throw(n) { asyncGeneratorStep(a, r, o, _next, _throw, \"throw\", n); } _next(void 0); }); }; }\n// Self-invoking async function to load Firebase modules from local sources first,\n// falling back to CDN if local modules are not available.\n_asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee() {\n  var initializeApp, getAnalytics, firebaseAppModule, firebaseAnalyticsModule, _firebaseAppModule, _firebaseAnalyticsModule, firebaseConfig, app, analytics;\n  return _regeneratorRuntime().wrap(function _callee$(_context) {\n    while (1) switch (_context.prev = _context.next) {\n      case 0:\n        _context.prev = 0;\n        _context.next = 3;\n        return Promise.resolve().then(function webpackMissingModule() { var e = new Error(\"Cannot find module 'node_modules/firebase/app'\"); e.code = 'MODULE_NOT_FOUND'; throw e; });\n      case 3:\n        firebaseAppModule = _context.sent;\n        _context.next = 6;\n        return Promise.resolve().then(function webpackMissingModule() { var e = new Error(\"Cannot find module 'node_modules/firebase/analytics'\"); e.code = 'MODULE_NOT_FOUND'; throw e; });\n      case 6:\n        firebaseAnalyticsModule = _context.sent;\n        initializeApp = firebaseAppModule.initializeApp;\n        getAnalytics = firebaseAnalyticsModule.getAnalytics;\n        console.log(\"Loaded Firebase modules from local sources.\");\n        _context.next = 24;\n        break;\n      case 12:\n        _context.prev = 12;\n        _context.t0 = _context[\"catch\"](0);\n        console.warn(\"Local Firebase modules not available, falling back to CDN.\", _context.t0);\n        // Fallback: import Firebase modules from the CDN.\n        _context.next = 17;\n        return Promise.resolve(/*! import() */).then(__webpack_require__.bind(__webpack_require__, /*! https://www.gstatic.com/firebasejs/11.5.0/firebase-app.js */ \"https://www.gstatic.com/firebasejs/11.5.0/firebase-app.js\"));\n      case 17:\n        _firebaseAppModule = _context.sent;\n        _context.next = 20;\n        return Promise.resolve(/*! import() */).then(__webpack_require__.bind(__webpack_require__, /*! https://www.gstatic.com/firebasejs/11.5.0/firebase-analytics.js */ \"https://www.gstatic.com/firebasejs/11.5.0/firebase-analytics.js\"));\n      case 20:\n        _firebaseAnalyticsModule = _context.sent;\n        initializeApp = _firebaseAppModule.initializeApp;\n        getAnalytics = _firebaseAnalyticsModule.getAnalytics;\n        console.log(\"Loaded Firebase modules from CDN.\");\n      case 24:\n        // Your Firebase configuration\n        firebaseConfig = {\n          apiKey: \"AIzaSyCQDJLKGSEzBn3HMqe7c3KHp1iUapZOYm4\",\n          authDomain: \"web-assignment-4237d.firebaseapp.com\",\n          projectId: \"web-assignment-4237d\",\n          storageBucket: \"web-assignment-4237d.firebasestorage.app\",\n          messagingSenderId: \"836483725829\",\n          appId: \"1:836483725829:web:0e296ae8d81f6a7d4c3a6c\",\n          measurementId: \"G-S00EXY5D6J\"\n        }; // Initialize Firebase\n        app = initializeApp(firebaseConfig);\n        analytics = getAnalytics(app); // Expose the initialized Firebase app and analytics globally if needed\n        window.firebaseApp = app;\n        window.firebaseAnalytics = analytics;\n      case 29:\n      case \"end\":\n        return _context.stop();\n    }\n  }, _callee, null, [[0, 12]]);\n}))();\n\n//# sourceURL=webpack://web-assignment/./src/js/firebase.js?");
-
-/***/ }),
-
-/***/ "./src/js/index.js":
-/*!*************************!*\
-  !*** ./src/js/index.js ***!
-  \*************************/
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-
-"use strict";
-eval("__webpack_require__.r(__webpack_exports__);\n/* harmony import */ var _firebase_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./firebase.js */ \"./src/js/firebase.js\");\n/* harmony import */ var _firebase_js__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_firebase_js__WEBPACK_IMPORTED_MODULE_0__);\n\nconsole.log(\"Firebase Initialised\");\n\n// Check if logged-in Function\nwindow.onload = function () {\n  // Debugging isLoggedIn variable\n  console.log(\"isLoggedIn:\", typeof isLoggedIn !== \"undefined\" ? isLoggedIn : \"Not defined\");\n  if (typeof isLoggedIn === \"undefined\") {\n    console.error(\"isLoggedIn is not defined\");\n    return;\n  }\n\n  // Debugging isAdmin variable\n  console.log(\"isAdmin:\", typeof isAdmin !== \"undefined\" ? isAdmin : \"Not defined\");\n  if (typeof isAdmin === \"undefined\") {\n    console.error(\"isAdmin is not defined\");\n    return;\n  }\n\n  // Get button and badge elements\n  var loginButton = document.getElementById('loginButton');\n  var libraryButton = document.getElementById('libraryButton');\n  var libraryBadge = document.getElementById('library_badge');\n  var cartButton = document.getElementById('cartButton');\n  var cartBadge = document.getElementById('cart_badge');\n  var sessionButton = document.getElementById('sessionButton');\n  var adminButton = document.getElementById('adminButton');\n\n  // Update UI based on login state\n  if (isLoggedIn) {\n    loginButton.innerHTML = \"My&nbsp;&nbsp;Account\";\n    loginButton.href = \"account.php\";\n    libraryButton.classList.remove(\"disabled\");\n    libraryButton.removeAttribute(\"aria-disabled\");\n    //libraryBadge?.removeAttribute('hidden'); \n    cartButton.classList.remove(\"disabled\");\n    cartButton.removeAttribute(\"aria-disabled\");\n    //cartBadge?.removeAttribute('hidden');\n    sessionButton === null || sessionButton === void 0 || sessionButton.removeAttribute('hidden');\n  } else {\n    loginButton.innerHTML = \"Login\";\n    loginButton.href = \"login.php\";\n    libraryButton.classList.add(\"disabled\");\n    libraryButton.setAttribute(\"aria-disabled\", \"true\");\n    libraryBadge === null || libraryBadge === void 0 || libraryBadge.setAttribute('hidden', 'hidden');\n    cartButton.classList.add(\"disabled\");\n    cartButton.setAttribute(\"aria-disabled\", \"true\");\n    cartBadge === null || cartBadge === void 0 || cartBadge.setAttribute('hidden', 'hidden');\n    sessionButton === null || sessionButton === void 0 || sessionButton.setAttribute('hidden', 'hidden');\n  }\n  if (isAdmin) {\n    adminButton === null || adminButton === void 0 || adminButton.removeAttribute('hidden');\n  }\n};\n\n//Update cart badge on header Function\nfunction updateCartBadge() {\n  var cartItems = JSON.parse(localStorage.getItem('cartItems')) || []; // Retrieve cart items from localStorage\n  var cartCount = cartItems.length || 0; // Get the number of items in the cart\n\n  // Find the badge element in the Cart button\n  var cartBadge = document.querySelector('#cartButton .badge');\n  if (cartBadge) {\n    cartBadge.textContent = cartCount; // Update badge count\n    cartBadge.hidden = cartCount == 0; // Hide badge if count is 0\n  }\n}\n// Update library badge on header Function\nfunction updateLibraryBadge() {\n  var libraryCount = JSON.parse(localStorage.getItem('libraryCount')) || 0; // Get count from localStorage\n  var libraryBadge = document.querySelector('#libraryButton .badge');\n  // Find the badge element in the Library button\n  if (libraryBadge) {\n    libraryBadge.textContent = libraryCount; // Update badge count\n    libraryBadge.hidden = libraryCount == 0; // Hide badge if count is 0\n  }\n}\n\n// Show/Hide Password Function\ndocument.addEventListener(\"DOMContentLoaded\", function () {\n  // Select all password fields that start with \"password\"\n  document.querySelectorAll(\"input[type='password'][id^='password']\").forEach(function (passwordInput) {\n    var id = passwordInput.id; // Get the ID of the password input\n    var parent = passwordInput.parentElement; // Get the parent container\n\n    // Create the toggle icon dynamically\n    var toggleIcon = document.createElement(\"i\");\n    toggleIcon.classList.add(\"bi\", \"bi-eye-slash\", \"position-absolute\", \"top-50\", \"end-0\", \"translate-middle-y\", \"me-3\");\n    toggleIcon.style.cursor = \"pointer\";\n    toggleIcon.id = \"toggle\".concat(id); // Assign a unique ID\n\n    // Append the icon inside the parent container\n    parent.appendChild(toggleIcon);\n\n    // Add event listener for toggling password visibility\n    toggleIcon.addEventListener(\"click\", function () {\n      if (passwordInput.type === \"password\") {\n        passwordInput.type = \"text\"; // Show password\n        toggleIcon.classList.replace(\"bi-eye-slash\", \"bi-eye-fill\");\n      } else {\n        passwordInput.type = \"password\"; // Hide password\n        toggleIcon.classList.replace(\"bi-eye-fill\", \"bi-eye-slash\");\n      }\n    });\n  });\n});\n\n// Call the function initially to ensure the badge is updated on page load\nupdateCartBadge();\nupdateLibraryBadge();\n\n//# sourceURL=webpack://web-assignment/./src/js/index.js?");
-
-/***/ }),
-
-/***/ "https://www.gstatic.com/firebasejs/11.5.0/firebase-analytics.js":
-false,
-
-/***/ "https://www.gstatic.com/firebasejs/11.5.0/firebase-app.js":
-false
-
-/******/ 	});
-/************************************************************************/
-/******/ 	// The module cache
-/******/ 	var __webpack_module_cache__ = {};
-/******/ 	
-/******/ 	// The require function
-/******/ 	function __webpack_require__(moduleId) {
-/******/ 		// Check if module is in cache
-/******/ 		var cachedModule = __webpack_module_cache__[moduleId];
-/******/ 		if (cachedModule !== undefined) {
-/******/ 			return cachedModule.exports;
-/******/ 		}
-/******/ 		// Create a new module (and put it into the cache)
-/******/ 		var module = __webpack_module_cache__[moduleId] = {
-/******/ 			// no module.id needed
-/******/ 			// no module.loaded needed
-/******/ 			exports: {}
-/******/ 		};
-/******/ 	
-/******/ 		// Execute the module function
-/******/ 		__webpack_modules__[moduleId](module, module.exports, __webpack_require__);
-/******/ 	
-/******/ 		// Return the exports of the module
-/******/ 		return module.exports;
-/******/ 	}
+/******/ 	"use strict";
+/******/ 	// The require scope
+/******/ 	var __webpack_require__ = {};
 /******/ 	
 /************************************************************************/
-/******/ 	/* webpack/runtime/compat get default export */
-/******/ 	(() => {
-/******/ 		// getDefaultExport function for compatibility with non-harmony modules
-/******/ 		__webpack_require__.n = (module) => {
-/******/ 			var getter = module && module.__esModule ?
-/******/ 				() => (module['default']) :
-/******/ 				() => (module);
-/******/ 			__webpack_require__.d(getter, { a: getter });
-/******/ 			return getter;
-/******/ 		};
-/******/ 	})();
-/******/ 	
-/******/ 	/* webpack/runtime/define property getters */
-/******/ 	(() => {
-/******/ 		// define getter functions for harmony exports
-/******/ 		__webpack_require__.d = (exports, definition) => {
-/******/ 			for(var key in definition) {
-/******/ 				if(__webpack_require__.o(definition, key) && !__webpack_require__.o(exports, key)) {
-/******/ 					Object.defineProperty(exports, key, { enumerable: true, get: definition[key] });
-/******/ 				}
-/******/ 			}
-/******/ 		};
-/******/ 	})();
-/******/ 	
-/******/ 	/* webpack/runtime/hasOwnProperty shorthand */
-/******/ 	(() => {
-/******/ 		__webpack_require__.o = (obj, prop) => (Object.prototype.hasOwnProperty.call(obj, prop))
-/******/ 	})();
-/******/ 	
 /******/ 	/* webpack/runtime/make namespace object */
 /******/ 	(() => {
 /******/ 		// define __esModule on exports
@@ -104,11 +18,188 @@ false
 /******/ 	})();
 /******/ 	
 /************************************************************************/
-/******/ 	
-/******/ 	// startup
-/******/ 	// Load entry module and return exports
-/******/ 	// This entry module can't be inlined because the eval devtool is used.
-/******/ 	var __webpack_exports__ = __webpack_require__("./src/js/index.js");
-/******/ 	
+var __webpack_exports__ = {};
+/*!*************************!*\
+  !*** ./src/js/index.js ***!
+  \*************************/
+__webpack_require__.r(__webpack_exports__);
+window.onload = function () {
+  // Debugging isLoggedIn variable
+  console.log("isLoggedIn:", typeof isLoggedIn !== "undefined" ? isLoggedIn : "Not defined");
+  if (typeof isLoggedIn === "undefined") {
+    console.error("isLoggedIn is not defined");
+    return;
+  }
+
+  // Debugging isAdmin variable
+  console.log("isAdmin:", typeof isAdmin !== "undefined" ? isAdmin : "Not defined");
+  if (typeof isAdmin === "undefined") {
+    console.error("isAdmin is not defined");
+    return;
+  }
+
+  // Debugging reCAPTCHA variable
+  console.log("recaptchaVerified:", typeof recaptchaVerified !== "undefined" ? recaptchaVerified : "Not defined");
+  if (typeof recaptchaVerified === "undefined") {
+    console.error("recaptchaVerified is not defined");
+    return;
+  }
+
+  // Debugging Session variable
+  console.log("Session:", typeof Session !== "undefined" ? Session : "Not defined");
+  if (typeof Session === "undefined") {
+    console.error("Session is not defined");
+    return;
+  }
+
+  // Debugging User_id variable
+  console.log("User_id:", typeof User_id !== "undefined" ? User_id : "Not defined");
+  if (typeof User_id === "undefined") {
+    console.error("User_id is not defined");
+    return;
+  }
+  var fadeElements = document.querySelectorAll('.fade-in');
+  fadeElements.forEach(function (element) {
+    element.classList.add('show');
+  });
+
+  // Get button and badge elements
+  var loginButton = document.getElementById('loginButton');
+  var libraryButton = document.getElementById('libraryButton');
+  var libraryBadge = document.getElementById('library_badge');
+  var cartButton = document.getElementById('cartButton');
+  var cartBadge = document.getElementById('cart_badge');
+  var sessionButton = document.getElementById('sessionButton');
+  var adminButton = document.getElementById('adminButton');
+
+  // Update UI based on login state
+  if (isLoggedIn) {
+    loginButton.innerHTML = "My&nbsp;&nbsp;Account";
+    loginButton.href = "account.php";
+    libraryButton.classList.remove("disabled");
+    libraryButton.removeAttribute("aria-disabled");
+    //libraryBadge?.removeAttribute('hidden'); 
+    cartButton.classList.remove("disabled");
+    cartButton.removeAttribute("aria-disabled");
+    //cartBadge?.removeAttribute('hidden');
+    sessionButton === null || sessionButton === void 0 || sessionButton.removeAttribute('hidden');
+  } else {
+    loginButton.innerHTML = "Login";
+    loginButton.href = "login.php";
+    libraryButton.classList.add("disabled");
+    libraryButton.setAttribute("aria-disabled", "true");
+    libraryBadge === null || libraryBadge === void 0 || libraryBadge.setAttribute('hidden', 'hidden');
+    cartButton.classList.add("disabled");
+    cartButton.setAttribute("aria-disabled", "true");
+    cartBadge === null || cartBadge === void 0 || cartBadge.setAttribute('hidden', 'hidden');
+    sessionButton === null || sessionButton === void 0 || sessionButton.setAttribute('hidden', 'hidden');
+  }
+  if (isAdmin) {
+    adminButton === null || adminButton === void 0 || adminButton.removeAttribute('hidden');
+  }
+};
+
+//Update cart badge on header Function
+window.updateCartBadge = function () {
+  var cartItems = JSON.parse(localStorage.getItem('cartItems')) || []; // Retrieve cart items from localStorage
+  var cartCount = cartItems.length || 0; // Get the number of items in the cart
+
+  // Find the badge element in the Cart button
+  var cartBadge = document.querySelector('#cartButton .badge');
+  if (cartBadge) {
+    cartBadge.textContent = cartCount; // Update badge count
+    cartBadge.hidden = cartCount === 0; // Hide badge if count is 0
+  }
+};
+// Update library badge on header Function
+window.updateLibraryBadge = function () {
+  var libraryCount = JSON.parse(localStorage.getItem('libraryCount')) || 0; // Get count from localStorage
+  var libraryBadge = document.querySelector('#libraryButton .badge');
+  // Find the badge element in the Library button
+  if (libraryBadge) {
+    libraryBadge.textContent = libraryCount; // Update badge count
+    libraryBadge.hidden = libraryCount === 0; // Hide badge if count is 0
+  }
+};
+
+// Show/Hide Password Function
+document.addEventListener("DOMContentLoaded", function () {
+  // Select all password fields that start with "password" [id^='password']
+  document.querySelectorAll("input[type='password']").forEach(function (passwordInput) {
+    var id = passwordInput.id; // Get the ID of the password input
+    var parent = passwordInput.parentElement; // Get the parent container
+    if (parent.querySelector("#toggle".concat(id))) return;
+
+    // Create the toggle icon dynamically
+    var toggleIcon = document.createElement("i");
+    toggleIcon.classList.add("bi", "bi-eye-slash", "position-absolute", "top-50", "end-0", "translate-middle-y", "me-3");
+    toggleIcon.style.cursor = "pointer";
+    toggleIcon.id = "toggle".concat(id); // Assign a unique ID
+
+    // Ensure the parent has relative positioning
+    parent.classList.add("position-relative");
+    // Append the icon inside the parent container
+    parent.appendChild(toggleIcon);
+
+    // Add event listener for toggling password visibility
+    toggleIcon.addEventListener("click", function () {
+      if (passwordInput.type === "password") {
+        passwordInput.type = "text"; // Show password
+        toggleIcon.classList.replace("bi-eye-slash", "bi-eye-fill");
+      } else {
+        passwordInput.type = "password"; // Hide password
+        toggleIcon.classList.replace("bi-eye-fill", "bi-eye-slash");
+      }
+    });
+  });
+});
+
+// Convert timestamp or Date to 'YYYY-MM-DD HH:mm:ss' in Hong Kong time
+function formatHKDateTime(input) {
+  var date = input instanceof Date ? input : new Date(input);
+
+  // Force Hong Kong timezone conversion using Intl
+  var options = {
+    timeZone: 'Asia/Hong_Kong',
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit',
+    hour: '2-digit',
+    minute: '2-digit',
+    second: '2-digit',
+    hour12: false
+  };
+  var formatter = new Intl.DateTimeFormat('en-GB', options);
+  var parts = formatter.formatToParts(date).reduce(function (acc, part) {
+    acc[part.type] = part.value;
+    return acc;
+  }, {});
+  return "".concat(parts.year, "-").concat(parts.month, "-").concat(parts.day, " ").concat(parts.hour, ":").concat(parts.minute, ":").concat(parts.second);
+}
+
+// Call the function initially to ensure the badge is updated on page load
+updateCartBadge();
+updateLibraryBadge();
+// Save the current page URL before redirecting to the login page
+if (!localStorage.getItem("preLoginUrl") && window.location.pathname.split("/").pop() !== "login.php") localStorage.setItem("preLoginUrl", window.location.href);
+
+// Sentry Debug
+Sentry.onLoad(function () {
+  Sentry.init({
+    // Tracing
+    tracesSampleRate: 1.0,
+    // Capture 100% of the transactions
+    // Session Replay
+    replaysSessionSampleRate: 0.5,
+    // This sets the sample rate at 50%. You may want to change it to 100% while in development and then sample at a lower rate in production.
+    replaysOnErrorSampleRate: 1.0 // If you're not already sampling the entire session, change the sample rate to 100% when sampling sessions where errors occur.
+  });
+});
+Sentry.replayIntegration({
+  unblock: [".sentry-unblock, [data-sentry-unblock]"],
+  unmask: [".sentry-unmask, [data-sentry-unmask]"]
+});
+//myUndefinedFunction();
 /******/ })()
 ;
+//# sourceMappingURL=bundle.js.map

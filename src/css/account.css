@@ -6,11 +6,13 @@ button {
     text-align: end;
     align-content: flex-end;
     justify-content: end;
+    display: block;
+    margin: 5px auto;
 }
 
-button:hover {
-    opacity: 0.75;
-}
+    button:hover {
+        opacity: 0.75;
+    }
 
 #account_container {
     border: 50px double #f1f1f1;
@@ -20,4 +22,25 @@ button:hover {
     text-align: center;
     align-content: center;
     justify-content: safe center;
+    margin: 1vh auto;
 }
+
+/* Style for the individual information items */
+.account-info-item {
+    display: flex; /* Use flexbox to align key and value */
+    justify-content: space-between; /* Put space between key and value */
+    align-items: baseline; /* Align items to the baseline */
+    padding: 5px 10px; /* Add some padding within each item */
+}
+
+    .account-info-item b {
+        /* Align the bold key text to the left */
+        text-align: left;
+        flex-grow: 1; /* Allow key to take up more space */
+    }
+
+    .account-info-item span {
+        /* Align the value text to the right */
+        text-align: right;
+        flex-grow: 1; /* Allow value to take up more space */
+    }

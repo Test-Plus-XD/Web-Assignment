@@ -14,11 +14,11 @@ const firebaseConfig = {
 
 // Initialize Firebase
 const app = firebase.initializeApp(firebaseConfig);
-const analytics = firebase.analytics();
-const auth = firebase.auth();
-const firestore = firebase.firestore(); // Not integrated
-const appCheck = firebase.appCheck();
-appCheck.activate('6Left_4qAAAAAGSyUGZfW4CPtYlVch3kqI5NWR6X', false); // Optional argument. If true, the SDK automatically refreshes App Check tokens as needed.
+const analytics = firebase.analytics(); // Not fully integrated
+const auth = firebase.auth(); // Not fully integrated
+const firestore = firebase.firestore(); // Not fully integrated
+const appCheck = firebase.appCheck(); // Not yet integrated
+//appCheck.activate('6Left_4qAAAAAGSyUGZfW4CPtYlVch3kqI5NWR6X', false); // Instantise a reCAPTCHA onload. If true, the SDK automatically refreshes App Check tokens as needed.
 //site key v3: 6Lfniv8qAAAAAFd_IKlfvcKGTrKkjda5y2Rat40Z
 //secret key v3: 6Lfniv8qAAAAAOhGK2XfG07fZHw4eTlk5eczgKBZ
 //site key v2: 6Left_4qAAAAAGSyUGZfW4CPtYlVch3kqI5NWR6X

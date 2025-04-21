@@ -16,10 +16,10 @@ html, body {
 
 /* Sidebar styling */
 .dashboard-sidebar {
-    flex: 0 0 20%; /* Fixes width to 10% */
-    border-right: 1px solid rgba(1, 1, 1, 1);
-    padding: 20px;
-    background-color: #e0dfe2; /* Light grey background */
+    flex: 0 0 13%; /* Fixes width */
+    border-right: 1.3px solid rgba(13, 13, 13, 13);
+    padding: 13px;
+    background-color: #e0dfe3; /* Light grey background */
 }
 
 /* Styling for all sidebar links */
@@ -103,7 +103,7 @@ html, body {
     }
 
 button {
-    width: 99%;
+    width: 100.1%;
     text-align: start;
 }
 
@@ -134,3 +134,24 @@ td {
     width: 90%;
     margin: auto;
 }
+
+/* Table styling to limit horizontal size and enable line breaks */
+.dashboard-content table {
+    width: 100%; /* Or a specific max-width if you prefer, e.g., 1200px */
+    table-layout: fixed; /* This is important for controlling column widths */
+    border-collapse: collapse; /* Optional: collapses borders for a cleaner look */
+}
+
+    .dashboard-content table th,
+    .dashboard-content table td {
+        border: 1px solid #ddd; /* Optional: adds borders to cells */
+        padding: 8px; /* Optional: adds some padding within cells */
+        word-break: break-word; /* Forces words to break if they are too long */
+        overflow-wrap: break-word; /* For older browsers */
+    }
+
+/* Optional:Set a specific width for certain columns (e.g., Photo URL) */
+/*.dashboard-content table th:nth-child(5),
+.dashboard-content table td:nth-child(5) {
+    width: 200px; Adjust the width as needed
+}*/

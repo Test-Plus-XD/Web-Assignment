@@ -11,19 +11,21 @@ body {
     display: flex;
     justify-content: space-between;
 }
+
     .cart_main img {
-        height: 25%;
+        height: 30%;
         max-height: fit-content;
     }
 
-.cart-container {  
+.cart-container {
+    margin: 20px;
     padding: 20px;
-}  
-
-.cart-container div { 
-    margin: 10px;  
-    padding: 10px;  
 }
+
+    .cart-container div {
+        margin: 10px;
+        padding: 10px;
+    }
 
 .button {
     text-decoration: none;
@@ -33,4 +35,9 @@ body {
     background-color: transparent;
     padding: 5px 10px;
     color: #007bff;
+}
+
+#cart-items {
+    border: 4px ridge #1d1f1d;
+    border-radius: 4vh;
 }

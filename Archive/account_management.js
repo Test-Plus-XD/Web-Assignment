@@ -9,6 +9,7 @@ document.getElementById("logoutButton").addEventListener("click", function () {
         body: JSON.stringify({ action: "logout" }),
     })
         .then(response => {
+            //console.log("Raw response from server:", response.text());
             if (!response.ok) throw new Error("Network response was not ok");
             return response.json();
         })

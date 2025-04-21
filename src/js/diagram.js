@@ -56,10 +56,8 @@ function drawBarChart(canvasId, labels, data, chartLabel, customOptions = {}) {
             }
         }
     };
-
     // Merge default configuration with any custom options provided
     const config = Object.assign({}, defaultConfig, customOptions);
-
     // Create and return the new chart
     return new Chart(ctx, config);
 }

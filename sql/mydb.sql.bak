@@ -23,7 +23,7 @@ SET time_zone = "+00:00";
 CREATE DATABASE IF NOT EXISTS `mydb` DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_520_ci;
 USE `mydb`;
 
--- --------------------------------------------------------
+-------------------------------------------------------
 
 --
 -- 資料表結構 `tb_accounts`
@@ -53,7 +53,7 @@ INSERT INTO `tb_accounts` (`user_id`, `fullname`, `username`, `password`, `isAdm
 (1, 'Test', 'Test', '5f4dcc3b5aa765d61d8327deb882cf99', 1),
 (27, '42', '42', 'a1d0c6e83f027327d8461063f4ac58a6', 0);
 
--- --------------------------------------------------------
+-------------------------------------------------------
 
 --
 -- 資料表結構 `tb_owned_products`
@@ -84,7 +84,7 @@ INSERT INTO `tb_owned_products` (`user_id`, `product_id`, `session`) VALUES
 (1, 4, ''),
 (1, 5, '');
 
--- --------------------------------------------------------
+-------------------------------------------------------
 
 --
 -- 資料表結構 `tb_products`

@@ -1,4 +1,3 @@
-// Check if logged-in Function
 window.onload = function () {
     // Debugging isLoggedIn variable
     console.log("isLoggedIn:", typeof isLoggedIn !== "undefined" ? isLoggedIn : "Not defined");
@@ -15,6 +14,35 @@ window.onload = function () {
         console.error("isAdmin is not defined");
         return;
     }
+
+    // Debugging reCAPTCHA variable
+    console.log("recaptchaVerified:", typeof recaptchaVerified !== "undefined" ? recaptchaVerified : "Not defined");
+
+    if (typeof recaptchaVerified === "undefined") {
+        console.error("recaptchaVerified is not defined");
+        return;
+    }
+
+    // Debugging Session variable
+    console.log("Session:", typeof Session !== "undefined" ? Session : "Not defined");
+
+    if (typeof Session === "undefined") {
+        console.error("Session is not defined");
+        return;
+    }
+
+    // Debugging User_id variable
+    console.log("User_id:", typeof User_id !== "undefined" ? User_id : "Not defined");
+
+    if (typeof User_id === "undefined") {
+        console.error("User_id is not defined");
+        return;
+    }
+
+    const fadeElements = document.querySelectorAll('.fade-in');
+    fadeElements.forEach(element => {
+        element.classList.add('show');
+    });
 
     // Get button and badge elements
     const loginButton = document.getElementById('loginButton');
@@ -53,7 +81,7 @@ window.onload = function () {
 };
 
 //Update cart badge on header Function
-function updateCartBadge() {
+window.updateCartBadge = function () {
     const cartItems = JSON.parse(localStorage.getItem('cartItems')) || []; // Retrieve cart items from localStorage
     const cartCount = cartItems.length || 0; // Get the number of items in the cart
 
@@ -61,17 +89,17 @@ function updateCartBadge() {
     const cartBadge = document.querySelector('#cartButton .badge');
     if (cartBadge) {
         cartBadge.textContent = cartCount; // Update badge count
-        cartBadge.hidden = cartCount == 0; // Hide badge if count is 0
+        cartBadge.hidden = cartCount === 0; // Hide badge if count is 0
     }
 }
 // Update library badge on header Function
-function updateLibraryBadge() {
+window.updateLibraryBadge = function () {
     const libraryCount = JSON.parse(localStorage.getItem('libraryCount')) || 0; // Get count from localStorage
     const libraryBadge = document.querySelector('#libraryButton .badge'); 
     // Find the badge element in the Library button
     if (libraryBadge) {
         libraryBadge.textContent = libraryCount; // Update badge count
-        libraryBadge.hidden = libraryCount == 0; // Hide badge if count is 0
+        libraryBadge.hidden = libraryCount === 0; // Hide badge if count is 0
     }
 }
 
@@ -81,6 +109,7 @@ document.addEventListener("DOMContentLoaded", () => {
     document.querySelectorAll("input[type='password']").forEach(passwordInput => {
         const id = passwordInput.id; // Get the ID of the password input
         const parent = passwordInput.parentElement; // Get the parent container
+        if (parent.querySelector(`#toggle${id}`)) return;
 
         // Create the toggle icon dynamically
         const toggleIcon = document.createElement("i");
@@ -88,6 +117,8 @@ document.addEventListener("DOMContentLoaded", () => {
         toggleIcon.style.cursor = "pointer";
         toggleIcon.id = `toggle${id}`; // Assign a unique ID
 
+        // Ensure the parent has relative positioning
+        parent.classList.add("position-relative");
         // Append the icon inside the parent container
         parent.appendChild(toggleIcon);
 
@@ -104,6 +135,31 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 });
 
+// Convert timestamp or Date to 'YYYY-MM-DD HH:mm:ss' in Hong Kong time
+function formatHKDateTime(input) {
+    const date = input instanceof Date ? input : new Date(input);
+
+    // Force Hong Kong timezone conversion using Intl
+    const options = {
+        timeZone: 'Asia/Hong_Kong',
+        year: 'numeric',
+        month: '2-digit',
+        day: '2-digit',
+        hour: '2-digit',
+        minute: '2-digit',
+        second: '2-digit',
+        hour12: false,
+    };
+
+    const formatter = new Intl.DateTimeFormat('en-GB', options);
+    const parts = formatter.formatToParts(date).reduce((acc, part) => {
+        acc[part.type] = part.value;
+        return acc;
+    }, {});
+
+    return `${parts.year}-${parts.month}-${parts.day} ${parts.hour}:${parts.minute}:${parts.second}`;
+}
+
 // Call the function initially to ensure the badge is updated on page load
 updateCartBadge();
 updateLibraryBadge();
@@ -119,5 +175,9 @@ Sentry.onLoad(function () {
         replaysSessionSampleRate: 0.5, // This sets the sample rate at 50%. You may want to change it to 100% while in development and then sample at a lower rate in production.
         replaysOnErrorSampleRate: 1.0, // If you're not already sampling the entire session, change the sample rate to 100% when sampling sessions where errors occur.
     });
+});
+Sentry.replayIntegration({
+    unblock: [".sentry-unblock, [data-sentry-unblock]"],
+    unmask: [".sentry-unmask, [data-sentry-unmask]"],
 });
 //myUndefinedFunction();

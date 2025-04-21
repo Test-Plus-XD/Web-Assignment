@@ -21,8 +21,8 @@ form {
     border: 1px solid #ccc;
     box-sizing: border-box;
   }
-  
-  button {
+
+  form button {
     background-color: #04AA6D;
     color: white;
     padding: 14px 20px;
@@ -61,13 +61,43 @@ form {
     float: right;
     padding-top: 16px;
   }
-  
-  @media screen and (max-width: 300px) {
+
+.modal {
+    position: fixed; /* Ensures the modal stays fixed on the screen */
+    top: 0; /* Start from the top of the viewport */
+    left: 0; /* Start from the left of the viewport */
+    width: 100vw; /* Full viewport width */
+    height: 100vh; /* Full viewport height */
+    background: radial-gradient(circle, rgba(0, 0, 0, 1.5) 0%, rgba(0, 0, 0, 0) 75%); /* Radial gradient for fade effect */
+    z-index: 10;
+    display: flex; /* Flexbox to center content */
+    align-items: center; /* Vertically centers the content */
+    justify-content: center; /* Horizontally centers the content */
+}
+
+.modal-content {
+    background-color: #fff;
+    padding: 40px;
+    border-radius: 20px;
+    width: 600px; /* Adjust this size as needed */
+    max-width: 80%; /* Ensures content doesn't overflow */
+}
+
+.close {
+    position: absolute; /* Positions the close button in the top-right corner */
+    top: 0;
+    right: 0;
+    padding: 10px;
+    cursor: pointer;
+    font-size: 30px; /* Adjusted size for a more appropriate close button */
+}
+
+@media screen and (max-width: 300px) {
     span.psw {
-      display: block;
-      float: none;
+        display: block;
+        float: none;
     }
     .cancelbtn {
-      width: 100%;
+        width: 100%;
     }
-  }
+}

@@ -1,64 +1,160 @@
 document.addEventListener("DOMContentLoaded", () => {
-    // Function to delete a Product
+    // Define a single base URL for all API endpoints (adjust if necessary)
+    const apiBaseUrl = 'http://localhost/Web Assignment';
+
+    // Function to delete a Product using the API endpoint
+    // Assumes Class_products.php has a DELETE /product/{id} endpoint
     window.deleteProduct = function (productId) {
-        if (!confirm("Are you sure you want to delete this product?")) return;
-        fetch("Class_products.php", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ action: "delete", product_id: productId })
+        if (!confirm("Are you sure you want to delete this product (" + (productId) + ") ? This action cannot be undone.")) return; // User cancelled deletion
+        // Construct the full API endpoint URL using the base URL, class file, and specific path
+        const deleteEndpoint = `${apiBaseUrl}/Class_products.php/product/${encodeURIComponent(productId)}`;
+
+        fetch(deleteEndpoint, {
+            method: "DELETE", // Use the DELETE HTTP method
+            headers: {
+                'Accept': 'application/json' // Indicate that we expect a JSON response
+                // No 'Content-Type' or 'body' needed for DELETE requests to this endpoint style
+            }
         })
-            .then(response => response.json())
+            .then(response => {
+                // Check for HTTP errors (status codes outside 2XX)
+                if (!response.ok) {
+                    // Attempt to read and parse the error body from the API
+                    return response.json().then(errorData => {
+                        console.error(`HTTP error deleting product ${productId}: ${response.status} ${response.statusText}`, errorData);
+                        // Throw an error with combined details
+                        throw new Error(`Delete API Error ${response.status}: ${errorData.error || JSON.stringify(errorData)}`);
+                    }).catch(() => {
+                        // Fallback if the error response body is not JSON
+                        console.error(`HTTP error deleting product ${productId}: ${response.status} ${response.statusText}. Response body was not JSON.`);
+                        throw new Error(`HTTP error deleting product ${productId}: ${response.status} ${response.statusText}`);
+                    });
+                }
+                // Assuming successful delete might return an empty body or a simple JSON success message
+                // Parse response body as JSON if it's not empty, otherwise return an empty object
+                return response.text().then(text => text ? JSON.parse(text) : {});
+            })
             .then(data => {
-                if (data.success) {
-                    document.getElementById(`product-${productId}`).remove();
+                console.log("Product delete successful:", data);
+                // Assuming your HTML element ID for the product row is 'product-{productId}'
+                const productRow = document.getElementById(`product-${productId}`);
+                if (productRow) {
+                    productRow.remove(); // Remove the row from the table
                     alert("Product deleted successfully!");
                 } else {
-                    alert("Failed to delete product: " + data.message);
+                    // If the row wasn't found, maybe just reload the page as a fallback
+                    alert("Product deleted successfully, but could not find the row to remove. Reloading page.");
+                    location.reload();
                 }
             })
-            .catch(error => console.error("Error:", error));
+            .catch(error => {
+                console.error("Error deleting product:", error);
+                alert("Failed to delete product: " + error.message);
+            });
     };
 
-    // Function to delete a User
+    // Function to delete a User using the API endpoint
+    // Assumes Class_users.php has a DELETE /user/{id} endpoint
     window.deleteUser = function (userId) {
-        if (!confirm("Are you sure you want to delete this user?")) return;
-        fetch("Class_users.php", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ action: "delete", user_id: userId })
+        if (!confirm("Are you sure you want to delete this user (" + (userId) + ") ? This action cannot be undone.")) return; // User cancelled deletion
+        // Construct the full API endpoint URL using the base URL, class file, and specific path
+        const deleteEndpoint = `${apiBaseUrl}/Class_users.php/user/${encodeURIComponent(userId)}`;
+
+        fetch(deleteEndpoint, {
+            method: "DELETE", // Use the DELETE HTTP method
+            headers: {
+                'Accept': 'application/json' // Indicate that we expect a JSON response
+                // No 'Content-Type' or 'body' needed for DELETE requests to this endpoint style
+            }
         })
-            .then(response => response.json())
+            .then(response => {
+                // Check for HTTP errors (status codes outside 2XX)
+                if (!response.ok) {
+                    // Attempt to read and parse the error body from the API
+                    return response.json().then(errorData => {
+                        console.error(`HTTP error deleting user ${userId}: ${response.status} ${response.statusText}`, errorData);
+                        // Throw an error with combined details
+                        throw new Error(`Delete API Error ${response.status}: ${errorData.error || JSON.stringify(errorData)}`);
+                    }).catch(() => {
+                        // Fallback if the error response body is not JSON
+                        console.error(`HTTP error deleting user ${userId}: ${response.status} ${response.statusText}. Response body was not JSON.`);
+                        throw new Error(`HTTP error deleting user ${userId}: ${response.status} ${response.statusText}`);
+                    });
+                }
+                // Assuming successful delete might return an empty body or a simple JSON success message
+                // Parse response body as JSON if it's not empty, otherwise return an empty object
+                return response.text().then(text => text ? JSON.parse(text) : {});
+            })
             .then(data => {
-                if (data.success) {
-                    document.getElementById(`user-${userId}`).remove();
+                console.log("User delete successful:", data);
+                // Assuming your HTML element ID for the user row is 'user-{userId}'
+                const userRow = document.getElementById(`user-${userId}`);
+                if (userRow) {
+                    userRow.remove(); // Remove the row from the table
                     alert("User deleted successfully!");
                 } else {
-                    alert("Failed to delete user: " + data.message);
+                    // If the row wasn't found, maybe just reload the page as a fallback
+                    alert("User deleted successfully, but could not find the row to remove. Reloading page.");
+                    location.reload();
                 }
             })
-            .catch(error => console.error("Error:", error));
+            .catch(error => {
+                console.error("Error deleting user:", error);
+                alert("Failed to delete user: " + error.message);
+            });
     };
 
-    // Function to delete a Purchase Record
-    window.deleteOwnedProduct = function (userId, productId) {
-        if (!confirm("Are you sure you want to delete this purchase record?")) return;
-        fetch("Class_owned_products.php", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ action: "delete", user_id: userId, product_id: productId })
+    // Function to delete a Purchase Record using the API endpoint
+    // Assumes Class_purchases.php has a DELETE /purchase/{id} endpoint
+    window.deletePurchase = function (purchaseId) {
+        if (!confirm("Are you sure you want to delete this record (" + (purchaseId) + ") ? This action cannot be undone.")) return; // User cancelled deletion
+        // Construct the full API endpoint URL using the base URL, class file, and specific path
+        const deleteEndpoint = `${apiBaseUrl}/Class_purchases.php/purchase/${encodeURIComponent(purchaseId)}`;
+
+        fetch(deleteEndpoint, {
+            method: 'DELETE', // Use the DELETE method
+            headers: {
+                'Accept': 'application/json' // Expect JSON response
+            }
         })
-            .then(response => response.json())
+            .then(response => {
+                // Check for HTTP errors
+                if (!response.ok) {
+                    // Attempt to read and parse the error body
+                    return response.json().then(errorData => {
+                        console.error(`HTTP error deleting purchase ${purchaseId}: ${response.status} ${response.statusText}`, errorData);
+                        throw new Error(`Delete API Error ${response.status}: ${errorData.error || JSON.stringify(errorData)}`);
+                    }).catch(() => {
+                        // Fallback if the error response body is not JSON
+                        console.error(`Failed to parse JSON error response for purchase deletion ${purchaseId}. HTTP Status: ${response.status} ${response.statusText}`);
+                        throw new Error(`HTTP error deleting purchase ${purchaseId}: ${response.status} ${response.statusText}`);
+                    });
+                }
+                // Assuming successful delete might return an empty body or a simple JSON success message
+                // Parse response body as JSON if it's not empty, otherwise return an empty object
+                return response.text().then(text => text ? JSON.parse(text) : {});
+            })
             .then(data => {
-                if (data.success) {
-                    document.getElementById(`ownedProduct-${userId}-${productId}`).remove();
-                    alert("Record deleted successfully!");
+                console.log('Delete successful:', data);
+                // On successful deletion, update the UI by removing the row
+                // Assuming your HTML element ID for the purchase row is 'purchase-row-{purchaseId}'
+                const purchaseRow = document.getElementById('purchase-row-' + purchaseId);
+                if (purchaseRow) {
+                    purchaseRow.remove(); // Remove the row from the table
+                    alert("Purchase record deleted successfully!");
                 } else {
-                    alert("Failed to delete record: " + data.message);
+                    // If the row wasn't found, maybe just reload the page as a fallback
+                    alert("Purchase record deleted successfully, but could not find the row to remove. Reloading page.");
+                    location.reload();
                 }
             })
-            .catch(error => console.error("Error:", error));
+            .catch(error => {
+                console.error('Error deleting purchase:', error);
+                alert('Failed to delete purchase record: ' + error.message);
+            });
     };
 
+    // Function to insert a new Record
     window.insertRecord = function (event, type) {
         event.preventDefault();
         if (confirm("Proceed to add new " + type + "?")) {
@@ -69,7 +165,7 @@ document.addEventListener("DOMContentLoaded", () => {
     // Function to update a Record
     window.editRecord = function (event, type, id) {
         event.preventDefault();
-        if (confirm("Are you sure you want to edit this record?")) {
+        if (confirm("Are you sure you want to edit this record (" + id + ") ?")) {
             window.location.href = `dashboard.php?content=update&type=${type}&id=${id}`;
         }
     };
@@ -93,7 +189,6 @@ document.addEventListener("DOMContentLoaded", () => {
             stockField.hidden = isDigitalYes.checked; // Hide if "Yes" is selected
         }
     }
-
 
     // Function for toggling descriptions
     document.addEventListener("click", (event) => {
@@ -129,4 +224,69 @@ document.addEventListener("DOMContentLoaded", () => {
             target.hidden = true;        // Hide "Read Less"
         }
     });
+    // Function to handle YouTube link conversion
+    const updateForm = document.getElementById('updateForm');
+    updateForm.addEventListener('submit', function (event) {
+        event.preventDefault();
+        const YTLink = document.getElementById('YTLink');
+        const originalUrl = YTLink.value;
+        const embedUrl = convertToEmbedURL(originalUrl);
+        YTLink.value = embedUrl;
+        this.submit();
+    });
+    function convertToEmbedURL(youtubeURL) {
+        if (typeof youtubeURL !== 'string' || youtubeURL.trim() === '') {
+            return youtubeURL;
+        }
+        let videoId = null; // Variable to store the extracted video ID.
+        let url; // Variable to hold the parsed URL object.
+        try {
+            // Use the built-in URL object for robust parsing of the URL string.
+            url = new URL(youtubeURL);
+        } catch (e) {
+            console.error("convertToEmbedURL: Failed to parse URL:", youtubeURL, e);
+            return youtubeURL;
+        }
+        // Get the hostname from the parsed URL and convert it to lowercase for case-insensitive comparison.
+        const hostname = url.hostname.toLowerCase();
+        if (hostname === 'www.youtube.com' || hostname === 'youtube.com') {
+            if (url.pathname === '/watch') {
+                const params = new URLSearchParams(url.search);
+                videoId = params.get('v'); // The video ID is typically in the 'v' query parameter.
+            }
+            else if (url.pathname.startsWith('/embed/')) {
+                videoId = url.pathname.substring('/embed/'.length);
+                const queryIndex = videoId.indexOf('?');
+                if (queryIndex !== -1) videoId = videoId.substring(0, queryIndex);
+                const fragmentIndex = videoId.indexOf('#');
+                if (fragmentIndex !== -1) videoId = videoId.substring(0, fragmentIndex);
+                if (videoId) {
+                    return `https://www.youtube.com/embed/${videoId}`;
+                }
+            }
+        } else if (hostname === 'youtu.be') {
+            videoId = url.pathname.substring(1);
+            if (videoId === '') {
+                videoId = null;
+            }
+        }
+        if (videoId) {
+            // Construct and return the standard YouTube embed URL using the extracted video ID.
+            return `https://www.youtube.com/embed/${videoId}`;
+        }
+        return youtubeURL;
+    }
+
+    // Pagination functionality
+    function updateQueryStringParameter(uri, key, value) {
+        var re = new RegExp("([?&])" + key + "=.*?(&|$)", "i");
+        var separator = uri.indexOf('?') !== -1 ? "&" : "?";
+        if (uri.match(re)) {
+            return uri.replace(re, '$1' + key + "=" + value + '$2');
+        }
+        else {
+            return uri + separator + key + "=" + value;
+        }
+    }
+    window.updateQueryStringParameter = updateQueryStringParameter; // Make it globally accessible if needed
 });
