@@ -23,7 +23,7 @@ SET time_zone = "+00:00";
 CREATE DATABASE IF NOT EXISTS `mydb` DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_520_ci;
 USE `mydb`;
 
--------------------------------------------------------
+-- -------------------------------------------------------
 
 --
 -- 資料表結構 `tb_accounts`
@@ -48,7 +48,7 @@ CREATE TABLE IF NOT EXISTS `tb_accounts` (
 INSERT DELAYED INTO `tb_accounts` (`user_id`, `fullname`, `username`, `password`, `isAdmin`) VALUES
 (1, 'Test', 'Test', '5f4dcc3b5aa765d61d8327deb882cf99', 1);
 
--------------------------------------------------------
+-- -------------------------------------------------------
 
 --
 -- 資料表結構 `tb_owned_products`
@@ -99,7 +99,7 @@ END
 $$
 DELIMITER ;
 
--------------------------------------------------------
+-- -------------------------------------------------------
 
 --
 -- 資料表結構 `tb_products`
