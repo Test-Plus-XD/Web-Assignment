@@ -82,10 +82,10 @@ if ($response === false) {
                         <button id="logoutButton" class="btn btn-warning">Logout</button>
                     </div>
                     <div class="p-2">
-                        <button id="changeButton" class="btn btn-warning" onclick="window.location.href='change_password.php';">Change Password</button>
+                        <!--<button id="changeButton" class="btn btn-warning" onclick="window.location.href='change_password.php';">Change Password</button>-->
                     </div>
                     <div class="p-2">
-                        <button id="deleteButton" class="btn btn-danger" data-uid="<?php echo htmlspecialchars($userId); ?>">Delete Account</button>
+                        <button id="deleteButton" class="btn btn-danger"?>Delete Account</button>
                     </div>
                 </div>
             </div>

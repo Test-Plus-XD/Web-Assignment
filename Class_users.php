@@ -109,20 +109,20 @@ class Users {
 
     private function deleteUserByUid(string $uid): array {
         $user = $this->getUserByUid($uid);
-        if ($user && isset($user['id'])) { // Use 'id' as it's the document ID now
-            return $this->deleteUser($user['id']);
+        if ($user && isset($user['uid'])) { // Use 'uid' as it's the Firebase User ID now
+            return $this->deleteUser($user['uid']);
         } else {
             return ['error' => 'User not found with UID: ' . $uid];
         }
     }
 
-    private function checkUserExistsByUid(string $uid): bool {
+    public function checkUserExistsByUid(string $uid): bool {
         $user = $this->getUserByUid($uid);
         return $user !== null;
     }
     
     // Kreait functions for deleting a OAuth user account
-    public function deleteFirebaseAuthAccount($uid) {
+    private function deleteFirebaseAuthAccount($uid) {
         require_once 'firebase_admin.php'; // Use shared Firebase Auth instance
         global $auth;
         try {

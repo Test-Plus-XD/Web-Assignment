@@ -80,8 +80,31 @@ document.addEventListener('DOMContentLoaded', function () {
             const user = firebase.auth().currentUser;
             if (!user) {
                 // If no Firebase user is logged in, alert and exit
-                alert("You must be signed in to delete your Firebase account.");
-                return;
+                //alert("You must be signed in to delete your Firebase account.");
+                alert("Please re-login before deleting your account for security reasons.");
+                // Session is too old – reauthenticate required
+                let providerId = user.providerData[0]?.providerId;
+                let provider;
+                // Choose correct OAuth provider
+                if (providerId === 'google.com') {
+                    provider = new firebase.auth.GoogleAuthProvider();
+                } else if (providerId === 'github.com') {
+                    provider = new firebase.auth.GithubAuthProvider();
+                } else {
+                    alert("Unsupported provider: " + providerId);
+                    provider = new firebase.auth.GoogleAuthProvider();
+                    return;
+                }
+
+                try {
+                    // Reauthenticate via popup
+                    const result = await user.reauthenticateWithPopup(provider);
+                    await result.user.delete(); // Try deletion again
+                } catch (reauthError) {
+                    console.error("Reauthentication failed:", reauthError);
+                    alert("Could not reauthenticate. Account not deleted.");
+                    return;
+                }
             }
 
             try {
@@ -93,7 +116,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 alert(data.message);
                 localStorage.clear();
                 localStorage.removeItem("cartItems");
-                window.location.href = "login.php";
+                //window.location.href = "login.php";
             } catch (err) {
                 // Handle specific Firebase errors (e.g. requires recent login)
                 console.error("Delete error:", err);
@@ -109,7 +132,8 @@ document.addEventListener('DOMContentLoaded', function () {
                         provider = new firebase.auth.GithubAuthProvider();
                     } else {
                         alert("Unsupported provider: " + providerId);
-                        provider = new firebase.auth.GoogleAuthProvider();
+                        //provider = new firebase.auth.GoogleAuthProvider();
+                        return;
                     }
 
                     try {
@@ -134,7 +158,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
             try {
                 // Attempt to delete the user from Firestore
-                const response = await fetch(`http://localhost/Web%20Assignment/Class_users.php/uid/${uid}`, {
+                const response = await fetch(`http://localhost/Web%20Assignment/Class_users.php/uid/${User_id}`, {
                     method: 'DELETE'
                 });
                 const result = await response.json();

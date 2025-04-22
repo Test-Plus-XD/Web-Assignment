@@ -73,6 +73,7 @@
     <script> const User_id = <?php echo json_encode($_SESSION['user_id'] ?? null); ?>; </script>
     <script> const Session = <?php echo json_encode(session_id()); ?>; </script>
     <script src="dist/bundle.js" defer></script>
+    <script src="src/js/firebase_cdn.js"></script>
     <script src="src/js/chatbot_widget.js"></script>
     <link rel="stylesheet" href="src/css/index.css">
     <link rel="stylesheet" href="src/css/<?php echo $pageCSS ?>">

@@ -135,7 +135,6 @@ require_once 'head.php';
         <?php endif; ?>
     </main>
     <!-- Attaches event listeners to the buttons -->
-    <script src="src/js/firebase_cdn.js"></script>
     <script src="src/js/firebaseUI.js"></script>
     <script src="src/js/IPcheck.js" defer></script>
     <script src="src/js/reCAPTCHA.js" defer></script>

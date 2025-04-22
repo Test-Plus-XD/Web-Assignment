@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 // Start output buffering to prevent premature output
 ob_start();
 // Start session or resume existing one
@@ -76,7 +76,7 @@ class Account {
 
     // Delete the user from Firebase Auth and Firestore, then clear session
     private function delete(): void {
-        $uid = $_SESSION['firebase_uid'] ?? null; // Get Firebase UID from session
+        $uid = $_SESSION['user_id'] ?? null; // Get Firebase UID from session
         if (!$uid) {
             http_response_code(400);
             echo json_encode([
@@ -85,7 +85,7 @@ class Account {
             ]);
             exit;
         }
-
+        /* Moved to Class_users.php
         // Initialize Firebase Admin SDK here, only when needed for delete
         try {
             $serviceAccount = require __DIR__ . '/path/to/serviceAccountKey.json';
@@ -101,23 +101,22 @@ class Account {
             ]);
             exit;
         }
-
+        */
         try {
-            // Attempt to delete from Firebase Auth
-             $this->auth->deleteUser($uid);
-             error_log("User deleted from Firebase Auth: " . $uid);
+            /* Attempt to delete from Firebase Auth
+            $this->auth->deleteUser($uid);
+            error_log("User deleted from Firebase Auth: " . $uid);
 
             // Attempt to delete from Firestore via API
-             $result = $this->callUsersDeleteEndpoint($uid);
-             error_log("Firestore deletion API call result for UID " . $uid . ": " . print_r($result, true));
-
-
+            $result = $this->callUsersDeleteEndpoint($uid);
+            error_log("Firestore deletion API call result for UID " . $uid . ": " . print_r($result, true));
+            */
             // Clear session regardless of deletion success in external services
             $_SESSION = [];       // Clear session variables
             session_destroy();      // Destroy session
-             error_log("Session cleared for UID: " . $uid);
+            error_log("Session cleared for UID: " . $uid);
 
-             // Prepare final response based on Firestore deletion result
+            // Prepare final response based on Firestore deletion result
             if (isset($result['error'])) {
                 // Partial success: deleted from Auth but Firestore deletion failed
                 echo json_encode([
@@ -131,7 +130,6 @@ class Account {
                     'message' => 'Account deleted successfully'
                 ]);
             }
-
         } catch (\Firebase\Auth\UserNotFoundException $e) {
             error_log("User not found in Firebase Auth during deletion: " . $uid);
             http_response_code(404);
