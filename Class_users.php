@@ -120,17 +120,17 @@ class Users {
         $user = $this->getUserByUid($uid);
         return $user !== null;
     }
-}
-
-// Kreait functions for deleting a OAuth user account
-public function deleteFirebaseAuthAccount($uid) {
-    require_once 'firebase_admin.php'; // Use shared Firebase Auth instance
-    global $auth;
-    try {
-        $auth->deleteUser($uid); // Delete user via Admin SDK
-        return ['status' => 'success', 'message' => "User with UID $uid deleted from Firebase Auth."];
-    } catch (\Throwable $e) {
-        return ['status' => 'error', 'message' => 'Failed to delete Firebase Auth user: ' . $e->getMessage()];
+    
+    // Kreait functions for deleting a OAuth user account
+    public function deleteFirebaseAuthAccount($uid) {
+        require_once 'firebase_admin.php'; // Use shared Firebase Auth instance
+        global $auth;
+        try {
+            $auth->deleteUser($uid); // Delete user via Admin SDK
+            return ['status' => 'success', 'message' => "User with UID $uid deleted from Firebase Auth."];
+        } catch (\Throwable $e) {
+            return ['status' => 'error', 'message' => 'Failed to delete Firebase Auth user: ' . $e->getMessage()];
+        }
     }
 }
 

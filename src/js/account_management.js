@@ -109,7 +109,7 @@ document.addEventListener('DOMContentLoaded', function () {
                         provider = new firebase.auth.GithubAuthProvider();
                     } else {
                         alert("Unsupported provider: " + providerId);
-                        return;
+                        provider = new firebase.auth.GoogleAuthProvider();
                     }
 
                     try {
