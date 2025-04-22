@@ -67,14 +67,13 @@ function displayPagination($pagination) {
     $allowed_records_per_page = $pagination['allowed_records_per_page'];
 
     // Output the insert button if the insert type is set
-if (!empty($insert_type)) {
-    $processedLabel = preg_replace('/^all_/i', '', $insert_type);
-    // 2. Remove trailing 's' if present (to singularise)
-    if (str_ends_with($processedLabel, 's')) $processedLabel = substr($processedLabel, 0, -1);
-    $labelText = ucfirst($processedLabel);
-    echo '<button class="btn btn-outline-primary" style="background-color: aqua;" onclick="insertRecord(event, \'' . $insert_type . '\')">&plus; Add New ' . $labelText . '</button>';
-}
-
+    if (!empty($insert_type)) {
+        $processedLabel = preg_replace('/^all_/i', '', $insert_type);
+        // Remove trailing 's' if present (to singularise)
+        if (str_ends_with($processedLabel, 's')) $processedLabel = substr($processedLabel, 0, -1);
+        $labelText = ucfirst($processedLabel);
+        echo '<button class="btn btn-outline-primary" style="background-color: aqua;" onclick="insertRecord(event, \'' . $insert_type . '\')">&plus; Add New ' . $labelText . '</button>';
+    }
 
     // Output the records per page dropdown
     echo '<div class="mb-3">';

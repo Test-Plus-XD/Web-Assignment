@@ -1,39 +1,82 @@
 // Payment Integration
-document.addEventListener("DOMContentLoaded", async () => {
-    // This is your test secret API key.
-    const stripe = require('stripe')('sk_test_51QQiCZCA0AswCry58ef8rBfji4V8MJjjsSEmBeN9mYJ9Lcsc3mQuyDgZSnptWjlpgSLnbFS6bpK6Lp7UNInN83NZ00PIQlSaTy');
-    const express = require('express');
-    const app = express();
-    app.use(express.static('public'));
+import express from 'express';
+import Stripe from 'stripe';
+import dotenv from 'dotenv';
+import bodyParser from 'body-parser';
+import cors from 'cors';
 
-    const YOUR_DOMAIN = 'http://localhost:4242';
+dotenv.config();
+console.log("Stripe secret key loaded:", process.env.stripe_secret_key ? "Yes" : "No");
 
-    app.post('/create-checkout-session', async (req, res) => {
-        const session = await stripe.checkout.sessions.create({
-            ui_mode: 'embedded',
-            line_items: [
-                {
-                    // Provide the exact Price ID (for example, pr_1234) of the product you want to sell
-                    price: '{{PRICE_ID}}',
-                    quantity: 1,
+const app = express();
+const port = 4242; // Port for API
+const stripe = new Stripe(process.env.stripe_secret_key);
+
+app.use(cors()); // Enable Cross-Origin Resource Sharing for the PHP page
+app.use(bodyParser.json()); // Parse JSON request bodies
+app.use(express.json()); // for POST body parsing
+
+// Creates a checkout session based on cart data
+app.post('/checkout', async (req, res) => {
+    console.log('Received checkout payload:', req.body);
+    try {
+        const { items } = req.body;
+        // Convert your product structure to Stripe line items
+        const lineItems = items.map(item => ({
+            price_data: {
+                currency: 'hkd',
+                product_data: {
+                    name: item.name,
                 },
-            ],
+                unit_amount: Math.round(item.price * 100), // Convert to cents
+            },
+            quantity: item.quantity,
+        }));
+        console.dir(lineItems, { depth: null });
+        const session = await stripe.checkout.sessions.create({
+            //payment_method_types: ['card'],
+            line_items: lineItems,
             mode: 'payment',
-            return_url: `${YOUR_DOMAIN}/return.html?session_id={CHECKOUT_SESSION_ID}`,
-            automatic_tax: { enabled: true },
+            success_url: 'http://localhost/Web%20Assignment/payment_completed.php?session_id={CHECKOUT_SESSION_ID}', //Stripe will automatically replace {CHECKOUT_SESSION_ID} with the real session ID on redirect
+            cancel_url: 'http://localhost/Web%20Assignment/cart.php',
         });
-
-        res.send({ clientSecret: session.client_secret });
-    });
-
-    app.get('/session-status', async (req, res) => {
-        const session = await stripe.checkout.sessions.retrieve(req.query.session_id);
-
-        res.send({
-            status: session.status,
-            customer_email: session.customer_details.email
+        res.json({ url: session.url });
+        console.log("Stripe Checkout session created:", session.id); // 
+    } catch (error) {
+        console.error('Stripe session creation failed:', error.message || error);
+        res.status(500).json({
+            error: 'Failed to create Stripe session',
+            details: error.message || 'Unknown error'
         });
-    });
-
-    app.listen(4242, () => console.log('Running on port 4242'));
+    }
 });
+
+// Verifies Stripe session after checkout
+app.get('/verify-Stripe', async (req, res) => {
+    const sessionId = req.query.session_id;
+    if (!sessionId) {
+        return res.status(400).json({ error: "Missing session_id" });
+    } else {
+        console.log("Stripe session_id to be verified:", sessionId);
+    }
+
+    try {
+        const session = await stripe.checkout.sessions.retrieve(sessionId);
+        if (session.payment_status === "paid") {
+            res.json({ verified: true, session });
+        } else {
+            res.status(403).json({ verified: false, message: "Payment not completed" });
+        }
+    } catch (error) {
+        console.error("Error verifying session:", error);
+        res.status(500).json({ error: "Failed to verify session" });
+    }
+});
+
+app.listen(port, () => {
+    console.log(`Stripe API server listening at http://localhost:${port}`);
+});
+
+//Navigate to project directory: cd C: \wamp64\www\Web Assignment\
+//Run PM2 using npx: npx pm2 start src/js/stripe.js --name stripe --env production
+//Test card: Visa	4242424242424242		\Any 3 digits	\Any future date

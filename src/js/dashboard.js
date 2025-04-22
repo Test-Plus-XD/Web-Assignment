@@ -157,7 +157,12 @@ document.addEventListener("DOMContentLoaded", () => {
     // Function to insert a new Record
     window.insertRecord = function (event, type) {
         event.preventDefault();
-        if (confirm("Proceed to add new " + type + "?")) {
+        let labelText = type.replace(/^all_/i, '');
+        if (labelText.endsWith('s')) {
+            labelText = labelText.slice(0, -1);
+        }
+        labelText = labelText.charAt(0).toUpperCase() + labelText.slice(1);
+        if (confirm(`Proceed to add new ${labelText}?`)) {
             window.location.href = `dashboard.php?content=update&type=${type}`;
         }
     };

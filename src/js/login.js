@@ -186,14 +186,14 @@ function registerFirebaseUser(firebaseUser) {
     };*/
     // Construct JSON payload for Firestore
     const payload = {
-        uid: uid,
-        displayName: displayName,
-        email: email,
-        phoneNumber: phoneNumber || "",
-        photoURL: photoURL || "",
-        emailVerified: emailVerified,
-        isAnonymous: isAnonymous,
-        isAdmin: false
+        uid: uid, // Always present
+        displayName: displayName, // May be null (e.g., Anonymous, new Email/Password)
+        email: email, // May be null (e.g., Anonymous, Phone)
+        phoneNumber: phoneNumber || "", // May be empty string
+        photoURL: photoURL || "", // May be empty string
+        emailVerified: emailVerified, // Always present, boolean
+        isAnonymous: isAnonymous, // Always present, boolean
+        isAdmin: false // Hardcoded
     };
 
     // Define the API endpoint for user creation
@@ -214,7 +214,7 @@ function registerFirebaseUser(firebaseUser) {
             try {
                 let data = JSON.parse(text); // Try to parse the text as JSON
                 console.log("Server response from Firestore registration (parsed JSON):", data);
-                if (data.success) {
+                if (data) {
                     console.log("Firestore user creation/login successful.");
                     updateSessionAfterFirebase(firebaseUser); // Update the PHP session with UID
                 } else {
@@ -243,11 +243,11 @@ function closeEmailModal() {
     document.getElementById("email-login-modal").style.display = "none";
 }
 function handleEmailSignIn() {
-    const email = document.getElementById("loginEmail")?.value;
-    const password = document.getElementById("loginPassword")?.value;
-    if (!email || !password) return alert("Please enter both email and password.");
+    let loginEmail = document.getElementById("loginEmail")?.value;
+    let password = document.getElementById("loginPassword")?.value;
+    if (!loginEmail || !loginPassword) return alert("Please enter both email and password.");
 
-    firebase.auth().signInWithEmailAndPassword(email, password)
+    firebase.auth().signInWithEmailAndPassword(loginEmail, loginPassword)
         .then(result => {
             console.log("Email sign-in success:", result.user);
             registerFirebaseUser(result.user);
@@ -256,6 +256,23 @@ function handleEmailSignIn() {
         .catch(err => {
             console.error("Email sign-in failed:", err);
             alert("Invalid email or password.");
+        });
+}
+// Function to handle new user registration
+function handleEmailRegistration() {
+    let createEmail = document.getElementById("createEmail")?.value;
+    let createPassword = document.getElementById("createPassword")?.value;
+    if (!createEmail || !createPassword) return alert("Please enter both email and password.");
+
+    firebase.auth().createUserWithEmailAndPassword(createEmail, createPassword)
+        .then(userCredential => {
+            const user = userCredential.user;
+            console.log("User registered:", user);
+            registerFirebaseUser(user);
+        })
+        .catch(error => {
+            console.error("Email registration failed:", error);
+            alert("Registration failed: " + error.message + "\n If you used the same email to sign in before,\n Please choose that option below.");
         });
 }
 

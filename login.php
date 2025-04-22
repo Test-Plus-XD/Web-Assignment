@@ -31,26 +31,27 @@ require_once 'head.php';
         <form action="Class_account.php" method="post" id="login-form" class="form_login" onsubmit="return validateLoginForm();">
             <div class="imgcontainer">
                 <img src="Multimedia/login.png" alt="Login" class="login">
+                <h3>Register</h3>
             </div>
             <div class="container">
                 <!-- For Firebase email sign-in, treat this as the email field -->
-                <!--<input type="email" placeholder="Email" class="form-control" name="email" id="loginEmail" required autocomplete="email">-->
-                <!--<label for="loginEmail"><b>Enter Email</b></label>-->
+                <!--<input type="text" class="form-control" name="username" id="username" autocomplete="username" placeholder="" required>
+                    <label for="username"><b>Enter Username</b></label>-->
                 <div class="form-floating mt-1">
-                    <input type="text" class="form-control" name="username" id="username" autocomplete="username" placeholder="" required>
-                    <label for="username"><b>Enter Username</b></label>
+                    <input type="email" class="form-control" name="email" id="createEmail" autocomplete="username" placeholder="" required>
+                    <label for="createEmail"><b>Enter Email</b></label>
                 </div>
 
                 <div class="form-floating my-2">
-                    <input type="password" class="form-control" name="password" id="loginPassword" autocomplete="current-password" placeholder="" required>
-                    <label for="loginPassword"><b>Enter Password</b></label>
+                    <input type="password" class="form-control" name="password" id="createPassword" autocomplete="current-password" placeholder="" required>
+                    <label for="createPassword"><b>Enter Password</b></label>
                 </div>
 
                 <!-- Login triggers reCAPTCHA and submits form only after success -->
-                <button type="submit" class="btn btn-primary mt-3">Login</button>
+                <button type="submit" class="btn btn-primary mt-3" onclick="handleEmailRegistration()">Login</button>
 
                 <!-- Page controls -->
-                <button type="button" class="btn btn-info mt-2" onclick="window.location.href='registration.php';">Register</button>
+                <!--<button type="button" class="btn btn-info mt-2" onclick="window.location.href='registration.php';">Register</button>-->
                 <button type="button" class="cancelbtn btn btn-danger mt-2" onclick="history.back()">Cancel</button>
             </div>
 

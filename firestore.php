@@ -9,6 +9,8 @@ define('FIREBASE_API_KEY', 'AIzaSyCQDJLKGSEzBn3HMqe7c3KHp1iUapZOYm4');
 define('FIRESTORE_API_BASE_URL', 'https://firestore.googleapis.com/v1/projects/' . FIREBASE_PROJECT_ID . '/databases/' . FIREBASE_DATABASE_ID . '/documents');
 // Define internal API base URL
 define('INTERNAL_API_BASE_URL', 'http://localhost/Web%20Assignment');
+// Make all PHP date/time functions default to Asia/Hong_Kong (UTC+8)
+date_default_timezone_set('Asia/Hong_Kong');
 
 // Import necessary PHP classes for date and time.
 //use DateTime;
@@ -81,14 +83,12 @@ trait FirestoreApiTrait {
             error_log("Firestore API cURL Error for {$method} {$url}: " . $curlError); // Log error.
             return ['error' => 'cURL Error', 'details' => $curlError]; // Return error structure.
         }
-
         $decodedResponse = json_decode($response, true); // Decode response body.
 
         if ($httpCode < 200 || $httpCode >= 300) { // Handle HTTP errors (non-2XX status).
             error_log("Firestore API HTTP Error {$httpCode} for {$method} {$url}: " . $response); // Log error.
              return $decodedResponse ?: ['error' => "HTTP Error {$httpCode}", 'details' => $response]; // Return error details.
         }
-
         return $decodedResponse; // Return decoded successful response.
     }
 
@@ -101,7 +101,7 @@ trait FirestoreApiTrait {
             if ($key === 'date' && is_int($value)) {
                  try {
                      $timestampInSeconds = $value / 1000.0; // Converts the integer value from milliseconds to seconds (float)
-                     $dateTimeValue = (new DateTime("@$timestampInSeconds"))->setTimezone(new DateTimeZone('UTC'));
+                     $dateTimeValue = (new DateTime("@$timestampInSeconds"))->setTimezone(new DateTimeZone('Asia/Hong_Kong')); // Default to Hong Kong time
                      //$dateTimeValue = (new DateTime("@$value"))->setTimezone(new DateTimeZone('UTC')); // Convert Unix timestamp to DateTime (UTC).
                      $fields[$key] = $this->_prepareFieldValue($dateTimeValue); // Pass DateTime to _prepareFieldValue.
                  } catch (Exception $e) {
@@ -116,39 +116,49 @@ trait FirestoreApiTrait {
     }
 
     // Wrap PHP values in Firestore type envelopes for writing.
-    // Handles standard PHP types and DateTime/DateTimeImmutable objects.
     private function _prepareFieldValue($value): array {
-         if (is_string($value))   return ['stringValue'  => $value]; // String.
-         if (is_bool($value))    return ['booleanValue' => $value]; // Boolean.
-         if (is_null($value))     return ['nullValue'    => null]; // Null.
-         if (is_int($value))      return ['integerValue' => $value]; // Integer.
-         if (is_float($value))    return ['doubleValue'  => $value]; // Float (double).
-         // Handle DateTime/DateTimeImmutable for Timestamp value.
-         if ($value instanceof DateTimeInterface) {
-              try {
-                  $rfc3339String = $value->format('Y-m-d\TH:i:s.v\Z'); // Format to RFC 3339 (Y-m-d).
-                  return ['timestampValue' => $rfc3339String]; // Timestamp.
-              } catch (Exception $e) {
-                   error_log("FirestoreApiTrait: Error formatting DateTime for timestampValue: " . $e->getMessage()); // Log error.
-                   return ['stringValue' => $value->format(DateTime::ATOM)]; // Fallback to string.
-              }
-         }
-         // Handle objects (excluding DateTime) as mapValue recursively.
-         if (is_object($value)) {
-              if (!($value instanceof DateTimeInterface)) { // If NOT a DateTime object.
-                return ['mapValue' => ['fields' => $this->_prepareFields((array)$value)]]; // Map.
-              }
-         }
-         // Handle arrays as arrayValue recursively.
-         if (is_array($value)) {
-            $arrayValues = [];
-            foreach ($value as $item) {
-                $arrayValues[] = $this->_prepareFieldValue($item); // Recurse for array items.
+        if (is_string($value))   return ['stringValue'  => $value]; // String.
+        if (is_bool($value))    return ['booleanValue' => $value]; // Boolean.
+        if (is_null($value))     return ['nullValue'    => null]; // Null.
+        if (is_int($value))      return ['integerValue' => $value]; // Integer.
+        if (is_float($value))    return ['doubleValue'  => $value]; // Float (double).
+        // Handle DateTime/DateTimeImmutable for Timestamp value.
+        if ($value instanceof DateTimeInterface) {
+            try {
+                $currentTz = $value->getTimezone();
+                $hkTz = new DateTimeZone('Asia/Hong_Kong');
+                $utcTz = new DateTimeZone('UTC');
+                // If time is in UTC, reinterpret it as if it were in HK (failsafe default).
+                if ($currentTz->getName() === 'UTC') {
+                    // Rebuild DateTime as if it's HK-local time.
+                    $value = new DateTime($value->format('Y-m-d H:i:s'), $hkTz);
+                }
+                // Convert to UTC for Firestore.
+                $value->setTimezone($utcTz);
+                // Format in RFC3339 with microseconds and Z suffix
+                $rfc3339String = $value->format('Y-m-d\TH:i:s.v\Z');
+                return ['timestampValue' => $rfc3339String];
+            } catch (Exception $e) {
+                error_log("FirestoreApiTrait: Error formatting DateTime for timestampValue: " . $e->getMessage());
+                return ['stringValue' => $value->format(DateTime::ATOM)];
             }
-            return ['arrayValue' => ['values' => $arrayValues]]; // Array.
-         }
-         error_log("FirestoreApiTrait: Unsupported value type encountered: " . gettype($value)); // Log error.
-         return ['nullValue' => null]; // Default to null.
+        }
+        // Handle objects (excluding DateTime) as mapValue recursively.
+        if (is_object($value)) {
+            if (!($value instanceof DateTimeInterface)) { // If NOT a DateTime object.
+            return ['mapValue' => ['fields' => $this->_prepareFields((array)$value)]]; // Map.
+            }
+        }
+        // Handle arrays as arrayValue recursively.
+        if (is_array($value)) {
+        $arrayValues = [];
+        foreach ($value as $item) {
+            $arrayValues[] = $this->_prepareFieldValue($item); // Recurse for array items.
+        }
+        return ['arrayValue' => ['values' => $arrayValues]]; // Array.
+        }
+        error_log("FirestoreApiTrait: Unsupported value type encountered: " . gettype($value)); // Log error.
+        return ['nullValue' => null]; // Default to null.
     }
 
     // Parse Firestore document JSON to PHP array for reading.
@@ -163,27 +173,29 @@ trait FirestoreApiTrait {
             }
         }
 
-        // Flatten 'date' field if it was parsed as a DateTime object
-        if (isset($output['date']) && $output['date'] instanceof DateTimeInterface) {
-            $output['date'] = $output['date']->format('d-m-Y H:i:s.u'); // Format to microsecond string
+        // If Firestore returned createTime, parse in UTC then convert to UTC+8 and format with microseconds
+        if (isset($document['createTime'])) {
+            // Parse the ISO8601 timestamp as UTC
+            $dtUtc = new DateTimeImmutable($document['createTime'], new DateTimeZone('UTC'));
+            // Convert to Asia/Hong_Kong (UTC+8)
+            $dtLocal = $dtUtc->setTimezone(new DateTimeZone('Asia/Hong_Kong'));
+            // Store formatted "d-m-Y H:i:s.u" string
+            $output['createTime'] = $dtLocal->format('d-m-Y H:i:s.u');
+        }
+        // If Firestore returned updateTime, parse in UTC then convert to UTC+8 and format with microseconds
+        if (isset($document['updateTime'])) {
+            // Parse the ISO8601 timestamp as UTC
+            $dtUtc = new DateTimeImmutable($document['updateTime'], new DateTimeZone('UTC'));
+            // Convert to Asia/Hong_Kong (UTC+8)
+            $dtLocal = $dtUtc->setTimezone(new DateTimeZone('Asia/Hong_Kong'));
+            // Store formatted "d-m-Y H:i:s.u" string
+            $output['updateTime'] = $dtLocal->format('d-m-Y H:i:s.u');
         }
 
-        // Format Firestore timestamps as plain strings
-        if (isset($document['createTime'])) {
-            try {
-                $dt = new DateTimeImmutable($document['createTime']); // Parse ISO timestamp
-                $output['createTime'] = $dt->format('d-m-Y H:i:s.u');  // Format with microseconds
-            } catch (Exception $e) {
-                $output['createTime'] = $document['createTime']; // Fallback
-            }
-        }
-        if (isset($document['updateTime'])) {
-            try {
-                $dt = new DateTimeImmutable($document['updateTime']);
-                $output['updateTime'] = $dt->format('d-m-Y H:i:s.u');
-            } catch (Exception $e) {
-                $output['updateTime'] = $document['updateTime'];
-            }
+        // If Firestore 'date' field wrapper turned into a DateTimeInterface, flatten it the same way
+        if (isset($output['date']) && $output['date'] instanceof DateTimeInterface) {
+            // Re-format the DateTimeInterface to "d-m-Y H:i:s.u"
+            $output['date'] = $output['date']->setTimezone(new DateTimeZone('Asia/Hong_Kong'))->format('d-m-Y H:i:s.u');
         }
         return $output; // Return parsed document.
     }
@@ -381,58 +393,52 @@ if (!function_exists('formatFirestoreDate')) {
     // @param string $contextOrFormat Either 'chart'(X), 'table', or a custom date format string (e.g., 'Y-m-d').
     // @return string A formatted date string, or an empty string on failure.
     function formatFirestoreDate(mixed $dateValue, string $contextOrFormat = ''): string {
-    $dateTimeObj = null;
-    // Try to get a DateTimeInterface object
-    if ($dateValue instanceof DateTimeInterface) {
-        $dateTimeObj = $dateValue;
-    } elseif (is_string($dateValue) && $dateValue !== '') {
-        // If it's a non-empty string, attempt to parse it into a DateTimeImmutable object
-        try {
-            // Assuming the string is in a format DateTimeImmutable constructor can understand (like RFC 3339)
-            $dateTimeObj = new DateTimeImmutable($dateValue);
-        } catch (Exception $e) {
-            // Log parsing errors but don't fail hard
-            error_log("formatFirestoreDate: Error parsing date string '" . $dateValue . "': " . $e->getMessage());
-            return ''; // Return empty string on parse failure
-        }
-    } else {
-        // Input is not a DateTime object or a string
-        // Check if it's an array containing items to format (as in the user's original function)
-        if (is_array($dateValue) && !empty($dateValue)) {
-            // Handle array case: Format each item and join
-            $formattedArray = [];
-            foreach ($dateValue as $item) {
-                // Recursively call formatFirestoreDate for each item in the array
-                // Pass the same context/format. This handles arrays of strings or DateTime objects.
-                $formattedArray[] = formatFirestoreDate($item, $contextOrFormat);
-            }
-            return implode(', ', array_filter($formattedArray, fn($v) => $v !== '')); // Join non-empty formatted strings
-        } else {
-            // It's truly an invalid type
-        error_log("formatFirestoreDate: Invalid date value type provided: " . gettype($dateValue));
-        return ''; // Return empty string for invalid types
-        }
-    }
+        $dt = null;
 
-    // Format DateTime object based on context or format string
-    if ($dateTimeObj instanceof DateTimeInterface) {
-        try {
-            // Determine the format string based on context
-            $formatString = match ($contextOrFormat) {
-                'table' => 'd-m-Y H:i:s', // Example: "20-04-2025 14:33:01"
-                default => 'Y-m-d',
-            };
-            // If the format string is empty, use a default RFC 3339 format (like ATOM)
-            if ($formatString === '') {
-                $formatString = DateTimeInterface::ATOM; // Example: 2005-08-15T15:52:01+00:00
-            }
-            return $dateTimeObj->format($formatString);
-        } catch (Exception $e) {
-            // Log formatting errors
-            error_log("formatFirestoreDate: Error formatting date with format '" . $formatString . "': " . $e->getMessage());
-            return 'Format failure'; // Return empty string on format failure
+        // If already a DateTimeInterface, use it
+        if ($dateValue instanceof DateTimeInterface) {
+            $dt = $dateValue;
         }
-    }
-    return ''; // Should not reach here if $dateTimeObj was successfully created/identified and formatted
+        // Else if a non??empty string, try to parse it as ISO8601
+        elseif (is_string($dateValue) && $dateValue !== '') {
+            try {
+                $dt = new DateTimeImmutable($dateValue, new DateTimeZone('UTC'));
+                // Convert parsed UTC to Asia/Hong_Kong
+                $dt = $dt->setTimezone(new DateTimeZone('Asia/Hong_Kong'));
+            } catch (Exception $e) {
+                error_log("formatFirestoreDate: parse error for '$dateValue' ?  " . $e->getMessage());
+                return '';
+            }
+        }
+        // Else if an array: map each element recursively
+        elseif (is_array($dateValue) && !empty($dateValue)) {
+            $out = [];
+            foreach ($dateValue as $item) {
+                $formatted = formatFirestoreDate($item, $contextOrFormat);
+                if ($formatted !== '') {
+                    $out[] = $formatted;
+                }
+            }
+            return implode(', ', $out);
+        } else {
+            // Unsupported type
+            error_log("formatFirestoreDate: unsupported type " . gettype($dateValue));
+            return '';
+        }
+
+        // Decide which format string to use
+        $formatString = match (strtolower($contextOrFormat)) {
+            'table' => 'd-m-Y H:i:s',  // human??readable table
+            'chart' => 'Y-m-d H:i',    // e.g. for chart axes
+            default => $contextOrFormat !== '' ? $contextOrFormat : DateTimeInterface::ATOM,
+        };
+
+        // Return the formatted result
+        try {
+            return $dt->format($formatString);
+        } catch (Exception $e) {
+            error_log("formatFirestoreDate: formatting error with '$formatString' ?  " . $e->getMessage());
+            return '';
+        }
     }
 }
