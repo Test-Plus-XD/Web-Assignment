@@ -122,6 +122,18 @@ class Users {
     }
 }
 
+// Kreait functions for deleting a OAuth user account
+public function deleteFirebaseAuthAccount($uid) {
+    require_once 'firebase_admin.php'; // Use shared Firebase Auth instance
+    global $auth;
+    try {
+        $auth->deleteUser($uid); // Delete user via Admin SDK
+        return ['status' => 'success', 'message' => "User with UID $uid deleted from Firebase Auth."];
+    } catch (\Throwable $e) {
+        return ['status' => 'error', 'message' => 'Failed to delete Firebase Auth user: ' . $e->getMessage()];
+    }
+}
+
 // Endpoint handler block for Users, routes requests based on PATH_INFO and HTTP method to output JSON
 if (isset($_SERVER['PATH_INFO'])) {
     $pathInfo = trim($_SERVER['PATH_INFO'], '/'); // Get the path information from the URL and trim leading/trailing slashes
@@ -176,13 +188,18 @@ if (isset($_SERVER['PATH_INFO'])) {
             echo json_encode(['error' => 'Invalid PUT/PATCH request']); // Return a JSON error message for invalid PUT or PATCH requests
         }
     } elseif ($method === 'DELETE') {
-        // Handle DELETE request for /user/{id} to delete a user record by document ID
-        if (isset($segments[0]) && $segments[0] === 'user' && isset($segments[1])) {
+        if (isset($segments[0]) && $segments[0] === 'auth' && isset($segments[1])) {
+             // Handle DELETE request for /auth/{uid} to delete a user OAuth account by Firebase UID
+            // Example cURL command: curl -X DELETE http://your-domain.com/Class_users.php/auth/some_firebase_uid
+            echo json_encode($users->deleteFirebaseAuthAccount($segments[1]));
+        } elseif (isset($segments[0]) && $segments[0] === 'user' && isset($segments[1])) {
+            // Handle DELETE request for /user/{id} to delete a user record by document ID
             // Example cURL command: curl -X DELETE http://your-domain.com/Class_users.php/user/some_document_id
             echo json_encode($users->deleteUser($segments[1]));
         } elseif (isset($segments[0]) && $segments[0] === 'uid' && isset($segments[1])) {
-            // Handle DELETE request for /uid/{id} to delete a user record by Firebase UID
+            // Handle DELETE request for /uid/{id} to delete a user record and OAuth account by Firebase UID
             // Example cURL command: curl -X DELETE http://your-domain.com/Class_users.php/uid/some_firebase_uid
+            echo json_encode($users->deleteFirebaseAuthAccount($segments[1]));
             echo json_encode($users->deleteUserByUid($segments[1]));
         } else {
             http_response_code(400); // Set the HTTP response code to 400 (Bad Request)

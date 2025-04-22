@@ -53,56 +53,73 @@ document.addEventListener("DOMContentLoaded", () => {
             });
     };
 
-    // Function to delete a User using the API endpoint
-    // Assumes Class_users.php has a DELETE /user/{id} endpoint
-    window.deleteUser = function (userId) {
-        if (!confirm("Are you sure you want to delete this user (" + (userId) + ") ? This action cannot be undone.")) return; // User cancelled deletion
-        // Construct the full API endpoint URL using the base URL, class file, and specific path
-        const deleteEndpoint = `${apiBaseUrl}/Class_users.php/user/${encodeURIComponent(userId)}`;
-
-        fetch(deleteEndpoint, {
+    // Function to delete both a Firebase Auth user and their corresponding Firestore document using the API endpoint
+    // Assumes Class_users.php has DELETE /user/{id} and /auth/{uid} endpoints
+    window.deleteUser = function (userId, userUID) {
+        if (!confirm("Are you sure you want to delete this user (" + userId + ")? This action cannot be undone.")) return;
+        const deleteAuthEndpoint = `${apiBaseUrl}/Class_users.php/auth/${encodeURIComponent(userUID)}`;
+        const deleteDocEndpoint = `${apiBaseUrl}/Class_users.php/user/${encodeURIComponent(userId)}`;
+        // Attempt to delete the Firebase Auth account
+        fetch(deleteAuthEndpoint, {
             method: "DELETE", // Use the DELETE HTTP method
             headers: {
-                'Accept': 'application/json' // Indicate that we expect a JSON response
-                // No 'Content-Type' or 'body' needed for DELETE requests to this endpoint style
+                'Accept': 'application/json' // Expect a JSON response
             }
         })
             .then(response => {
-                // Check for HTTP errors (status codes outside 2XX)
+                // If the deletion failed, log the error but continue with document deletion
                 if (!response.ok) {
-                    // Attempt to read and parse the error body from the API
+                    return response.json().then(err => {
+                        console.warn("Firebase Auth deletion failed:", err.message || err);
+                        return null; // Allow Firestore deletion regardless of Auth failure
+                    });
+                }
+                // Return the parsed JSON response (or empty object if no body)
+                return response.text().then(t => t ? JSON.parse(t) : {});
+            })
+            .then(() => {
+                // Proceed to delete the Firestore document
+                return fetch(deleteDocEndpoint, {
+                    method: "DELETE", // Use the DELETE HTTP method
+                    headers: {
+                        'Accept': 'application/json' // Expect a JSON response
+                    }
+                });
+            })
+            .then(response => {
+                // If the document deletion failed, try to parse and throw the error
+                if (!response.ok) {
                     return response.json().then(errorData => {
-                        console.error(`HTTP error deleting user ${userId}: ${response.status} ${response.statusText}`, errorData);
-                        // Throw an error with combined details
+                        console.error(`HTTP error deleting user ${userId}:`, errorData);
                         throw new Error(`Delete API Error ${response.status}: ${errorData.error || JSON.stringify(errorData)}`);
                     }).catch(() => {
-                        // Fallback if the error response body is not JSON
-                        console.error(`HTTP error deleting user ${userId}: ${response.status} ${response.statusText}. Response body was not JSON.`);
+                        // If response is not JSON, throw a generic error
                         throw new Error(`HTTP error deleting user ${userId}: ${response.status} ${response.statusText}`);
                     });
                 }
-                // Assuming successful delete might return an empty body or a simple JSON success message
-                // Parse response body as JSON if it's not empty, otherwise return an empty object
+                // Return the parsed JSON response (or empty object if no body)
                 return response.text().then(text => text ? JSON.parse(text) : {});
             })
             .then(data => {
+                // Final step: remove the user row from the DOM or reload page
                 console.log("User delete successful:", data);
-                // Assuming your HTML element ID for the user row is 'user-{userId}'
                 const userRow = document.getElementById(`user-${userId}`);
                 if (userRow) {
                     userRow.remove(); // Remove the row from the table
                     alert("User deleted successfully!");
                 } else {
-                    // If the row wasn't found, maybe just reload the page as a fallback
+                    // Fallback if the row could not be found
                     alert("User deleted successfully, but could not find the row to remove. Reloading page.");
                     location.reload();
                 }
             })
             .catch(error => {
+                // Handle any unexpected errors in the process
                 console.error("Error deleting user:", error);
                 alert("Failed to delete user: " + error.message);
             });
     };
+
 
     // Function to delete a Purchase Record using the API endpoint
     // Assumes Class_purchases.php has a DELETE /purchase/{id} endpoint

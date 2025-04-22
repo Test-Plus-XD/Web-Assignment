@@ -93,16 +93,61 @@ document.addEventListener('DOMContentLoaded', function () {
                 alert(data.message);
                 localStorage.clear();
                 localStorage.removeItem("cartItems");
-                window.location.href = "registration.php";
+                window.location.href = "login.php";
             } catch (err) {
                 // Handle specific Firebase errors (e.g. requires recent login)
                 console.error("Delete error:", err);
                 if (err.code === "auth/requires-recent-login") {
                     alert("Please re-login before deleting your account for security reasons.");
+                    // Session is too old – reauthenticate required
+                    const providerId = user.providerData[0]?.providerId;
+                    let provider;
+                    // Choose correct OAuth provider
+                    if (providerId === 'google.com') {
+                        provider = new firebase.auth.GoogleAuthProvider();
+                    } else if (providerId === 'github.com') {
+                        provider = new firebase.auth.GithubAuthProvider();
+                    } else {
+                        alert("Unsupported provider: " + providerId);
+                        return;
+                    }
+
+                    try {
+                        // Reauthenticate via popup
+                        const result = await user.reauthenticateWithPopup(provider);
+                        await result.user.delete(); // Try deletion again
+                        alert("Account reauthenticated and deleted.");
+                        // On success, notify the user, clear storage, and redirect to registration
+                        alert(data.message);
+                        localStorage.clear();
+                        localStorage.removeItem("cartItems");
+                        window.location.href = "login.php";
+                    } catch (reauthError) {
+                        console.error("Reauthentication failed:", reauthError);
+                        alert("Could not reauthenticate. Account not deleted.");
+                    }
                 } else {
                     // General error fallback
                     alert("Delete failed: " + err.message);
                 }
+            }
+
+            try {
+                // Attempt to delete the user from Firestore
+                const response = await fetch(`http://localhost/Web%20Assignment/Class_users.php/uid/${uid}`, {
+                    method: 'DELETE'
+                });
+                const result = await response.json();
+                if (response.ok && result.status === 'success') {
+                    alert("Your account and data have been deleted.");
+                    window.location.href = 'login.php'; // Redirect to login after deletion
+                } else {
+                    console.warn("Firebase Auth deleted, but Firestore user data deletion failed.");
+                    alert("Account deleted from Firebase, but not from Firestore: " + (result.message || "Unknown error"));
+                }
+            } catch (apiError) {
+                console.error("Failed to call backend delete API:", apiError);
+                alert("Your Firebase account was deleted, but there was a problem deleting your user data.");
             }
         });
     } else {
