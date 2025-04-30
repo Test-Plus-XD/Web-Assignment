@@ -15,7 +15,7 @@ if (!isset($_SESSION["isLogin"]) || $_SESSION["isLogin"] !== true) {
         <div class="cart-container container">  
             <h2>Your Cart</h2>  
             <div class="row d-flex justify-content-evenly">
-                <div id="cart-items" style="display: flex; justify-content: center;">
+                <div id="cart-items" style="justify-content: center;">
                     <!-- Dynamic content will be rendered here -->
                 </div>
                 <div id="cart-total" style="width=100%; display: flex; justify-content: center;"></div>

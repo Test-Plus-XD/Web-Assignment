@@ -180,7 +180,6 @@ class Account {
         }
     }
 
-
     // Updates the PHP session after a successful Firebase login.
     // Sets session variables and includes key info in the JSON response for client-side use.
     // @param array $data An associative array containing the request data, expected to have 'firebaseLogin' set to true and the Firebase 'uid'.

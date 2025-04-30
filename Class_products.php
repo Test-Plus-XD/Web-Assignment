@@ -65,11 +65,13 @@ if (isset($_SERVER['PATH_INFO'])) {
 
     if ($method === 'GET') {
         if (isset($segments[0]) && $segments[0] === 'product' && isset($segments[1])) {
+            // Handle GET request for /product/{id} to retrieve a product by its document ID
             // Example cURL command: curl -X GET http://your-domain.com/Class_products.php/product/some_product_id
             $productId = $segments[1];
             $product = $products->getProduct($productId);
             echo json_encode($product);
         } elseif (isset($segments[0]) && $segments[0] === 'all') {
+            // Handle GET request for /all to retrieve all product records
             // Example cURL command: curl -X GET http://your-domain.com/Class_products.php/all
             $allProducts = $products->listProducts();
             echo json_encode($allProducts);
@@ -80,6 +82,7 @@ if (isset($_SERVER['PATH_INFO'])) {
     } elseif ($method === 'POST') {
         $data = json_decode(file_get_contents('php://input'), true);
         if (isset($segments[0]) && $segments[0] === 'product') {
+            // Handle POST request for /product to insert a new product
             // Example cURL command: curl -X POST -H "Content-Type: application/json" -d '{"name": "New Product", "price": 25.99}' http://your-domain.com/Class_products.php/product
             $insertResult = $products->insertProduct($data);
             echo json_encode($insertResult); // Output the full JSON response

@@ -14,7 +14,7 @@
                     <div class="collapse navbar-collapse" id="navbarNav">
                         <ul class="navbar-nav ms-auto">
                             <li class="nav-item">
-                                <a id="sessionButton" class="nav-link flex-fill text-center disabled" href="session.php" style="font-size: 0.91vw;" hidden>Session ID:  <?php echo session_id() ; ?></a>
+                                <a id="sessionButton" class="nav-link flex-fill text-center disabled" href="session.php" style="font-size: 0.8em;" hidden>Session ID:  <?php echo session_id() ; ?></a>
                             </li>
                             <li class="nav-item">
                                 <a class="nav-link flex-fill" href="search.php">Search</a>

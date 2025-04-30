@@ -79,8 +79,8 @@ if (!empty($userList[0]) && is_array($userList[0])) {
                                     echo '<a href="' . $url . '" target="_blank" rel="noopener noreferrer">';
                                     echo '<img src="' . $url . '" alt="User Photo" style="max-width: 100px; max-height: 100px;">';
                                     echo '</a>';
-                                // Display 'True' or 'False' for boolean values
                                 } elseif (is_bool($value)) {
+                                    // Display 'True' or 'False' for boolean values
                                     echo $value ? 'True' : 'False';
                                 } else {
                                     echo htmlspecialchars((string)($value ?? '')); // Default output for other fields
@@ -94,7 +94,7 @@ if (!empty($userList[0]) && is_array($userList[0])) {
                         <button type="button" class="btn btn-sm btn-warning" onclick="editRecord(event, 'user', '<?= $user['ID'] ?? '' ?>')">
                             <i class="bi bi-pen"></i><br> Edit
                         </button>
-                        <button class="btn btn-sm btn-danger" onclick="deleteUser('<?= $user['ID'] ?? '' ?>')">
+                        <button class="btn btn-sm btn-danger" onclick="deleteUser('<?= $user['ID'] ?? '' ?>', '<?= $user['uid'] ?? '' ?>')">
                             <i class="bi bi-trash3"></i><br> Delete
                         </button>
                     </td>

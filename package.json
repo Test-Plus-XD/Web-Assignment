@@ -1,5 +1,7 @@
 {
   "dependencies": {
+    "@canvasjs/charts": "^3.12.11",
+    "@canvasjs/stockcharts": "^1.12.11",
     "@google/genai": "^0.8.0",
     "@google/generative-ai": "^0.24.0",
     "@sentry/browser": "^9.8.0",

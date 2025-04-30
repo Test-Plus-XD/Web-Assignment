@@ -48,6 +48,7 @@
         <!-- JavaScript Libraries -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.canvasjs.com/ga/canvasjs.min.js"></script>
     <script src="https://js-de.sentry-cdn.com/a390895a61d9ae66ff37883b6cf73c6b.min.js" crossorigin="anonymous"></script>
         <!-- jQuery -->
     <script src="https://ajax.aspnetcdn.com/ajax/jQuery/jquery-3.3.1.min.js"></script>

@@ -39,6 +39,7 @@ $threat = $data['threat'] ?? [];
 // Determine if the IP is suspicious
 $suspicious = (
     !empty($threat['is_tor']) ||
+    !empty($threat['is_vpn']) ||
     !empty($threat['is_proxy']) ||
     !empty($threat['is_anonymous']) ||
     !empty($threat['is_known_attacker']) ||

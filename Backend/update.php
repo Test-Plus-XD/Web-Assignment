@@ -307,7 +307,6 @@ show_form:
 
             // Determine if certain fields should be read-only in update mode.
             $readOnly = ($id && $type === 'purchase' && in_array($field, ['uid', 'product_id']));
-
             // Format the field name into a human-readable label.
             $label = ucwords(preg_replace('/([a-z])([A-Z])/', '$1 $2', str_replace("_", " ", $field)));
 
@@ -350,7 +349,7 @@ show_form:
                     <input type="hidden" name="<?= htmlspecialchars($field) ?>" value="">
                 <?php endif; ?>
                 <?php elseif ($typeHint === 'textarea'): ?>
-                <textarea name="<?= htmlspecialchars($field) ?>" id="<?= $field ?>" class="form-control" rows="5" <?= $readOnly ? 'readonly' : '' ?>><?= htmlspecialchars($value) ?></textarea>
+                <textarea name="<?= htmlspecialchars($field) ?>" id="<?= $field ?>" class="form-control" rows="20" <?= $readOnly ? 'readonly' : '' ?>><?= htmlspecialchars($value) ?></textarea>
                 <?php elseif ($typeHint === 'password'): ?>
                 <input type="password" name="<?= htmlspecialchars($field) ?>" id="<?= $field ?>" class="form-control" value="" <?= $readOnly ? 'readonly' : '' ?>>
                 <?php elseif ($typeHint === 'datetime'): ?>

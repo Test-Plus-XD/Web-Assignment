@@ -32,13 +32,12 @@ if (is_array($purchases) && !isset($purchases['error'])) {
     $users = callInternalApiGet('/Class_users.php/all');
     $products = callInternalApiGet('/Class_products.php/all');
 
-    // Check if both user and product fetches were successful and results are arrays
-    if (is_array($users) && !isset($users['error']) &&
-        is_array($products) && !isset($products['error'])) {
+    // Check if both user or product fetches were successful and results are arrays
+    if ((is_array($users) || isset($users['error'])) &&
+        (is_array($products) || isset($products['error']))) {
 
-        // Data Combination and Structuring
+        // Data Combination and Structuring: Create lookup maps for users and products by their ID for efficient access
 
-        // Create lookup maps for users and products by their ID for efficient access
         $userLookup = [];
         // Iterate through the fetched users array
         foreach ($users as $user) {
@@ -61,78 +60,82 @@ if (is_array($purchases) && !isset($purchases['error'])) {
             }
         }
 
-        // Iterate through the fetched purchase records to combine data
+        // 3. Iterate through the fetched purchase records to combine data
         foreach ($purchases as $purchase) {
-            // Ensure essential IDs exist in the purchase record before processing
-            // 'uid' links to the user, 'product_id' links to the product, 'ID' is the purchase document ID for deletion
+            // Ensure essential fields are present before processing
             if (!isset($purchase['uid'], $purchase['product_id'], $purchase['ID'])) {
                 error_log("Skipping purchase record due to missing 'uid', 'product_id', or 'ID': " . json_encode($purchase));
-                continue; // Skip this purchase record if essential data is missing
+                continue;
             }
 
-            // Look up the user and product details using the IDs from the purchase record
-            $user = $userLookup[$purchase['uid']] ?? null; // Get user details, null if not found
-            $product = $productLookup[$purchase['product_id']] ?? null; // Get product details, null if not found
+            // Try to look up user and product data using the provided IDs
+            $user = $userLookup[$purchase['uid']] ?? null;
+            $product = $productLookup[$purchase['product_id']] ?? null;
 
-            // Only include this purchase record in the final list if both corresponding user and product details were found
-            if ($user && $product) {
-                // Construct the final record structure based on $desired_order
-                $combinedRecord = [];
-                foreach ($desired_order as $field) {
-                    switch ($field) {
-                        case 'Record ID':
-                            // Map the document ID from the purchase record
-                            $combinedRecord[$field] = $purchase['ID'] ?? '';
-                            break;
-                        case 'User ID':
-                            // Map the user ID from the purchase record
-                            $combinedRecord[$field] = $purchase['uid'] ?? '';
-                            break;
-                        case 'username':
-                            // Map the username display name or email from the looked-up user record
-                             $combinedRecord[$field] = $user['displayName'] ?? 'N/A';
-                            break;
-                        case 'email':
-                            // Map the username  email from the looked-up user record
-                             $combinedRecord[$field] = $user['email'] ?? 'N/A';
-                            break;
-                        case 'Product ID':
-                            // Map the product ID from the purchase record
-                            $combinedRecord[$field] = $purchase['product_id'] ?? '';
-                            break;
-                        case 'title':
-                            // Map the card title from the looked-up product record
-                            $combinedRecord[$field] = $product['cardTitle'] ?? 'N/A';
-                            break;
-                        case 'itemPrice':
-                            // Map the itemPrice from the looked-up product record
-                            $combinedRecord[$field] = $product['itemPrice'] ?? 'N/A';
-                            break;
-                        case 'session':
-                            // Map the session ID from the purchase record
-                            $combinedRecord[$field] = $purchase['session'] ?? 'N/A';
-                            break;
-                        case 'Purchased_Date':
-                            // Map the date from the purchase record, format if it's a DateTimeInterface object
-                            $dateValue = $purchase['date'] ?? null;
-                            $combinedRecord[$field] = ($dateValue instanceof DateTimeInterface) ?
-                                $dateValue->format('Y-m-d H:i:s') : ($dateValue ?? 'N/A');
-                            break;
-                        default:
-                            // Handle any unexpected fields defined in $desired_order
-                            $combinedRecord[$field] = 'Unknown Field';
-                            error_log("Unknown field '" . $field . "' in \$desired_order for purchase record.");
-                            break;
-                    }
+            // Log only if BOTH user and product are missing
+            if (!$user && !$product) {
+                error_log("Both user and product missing for Purchase ID: " . ($purchase['ID'] ?? 'Unknown') .
+                            " | UID: " . ($purchase['uid'] ?? 'Unknown') .
+                            " | Product ID: " . ($purchase['product_id'] ?? 'Unknown'));
+            }
+
+            // Log cases where user or product is missing
+            //if (!$user) error_log("User not found for UID: " . ($purchase['uid'] ?? 'Unknown') . " in purchase ID: " . ($purchase['ID'] ?? 'Unknown'));
+            //if (!$product) error_log("Product not found for ID: " . ($purchase['product_id'] ?? 'Unknown') . " in purchase ID: " . ($purchase['ID'] ?? 'Unknown'));
+
+            // Start combining record fields based on $desired_order
+            $combinedRecord = [];
+            foreach ($desired_order as $field) {
+                switch ($field) {
+                    case 'Record ID':
+                        // Add purchase document ID
+                        $combinedRecord[$field] = $purchase['ID'] ?? '';
+                        break;
+                    case 'User ID':
+                        // Add user UID
+                        $combinedRecord[$field] = $purchase['uid'] ?? '';
+                        break;
+                    case 'username':
+                        // Add display name or mark as deleted with <del> tag
+                        $combinedRecord[$field] = $user ? htmlspecialchars($user['displayName'] ?? 'N/A') : '<del>Deleted User</del>';
+                        break;
+                    case 'email':
+                        // Add email or mark as deleted with <del> tag
+                        $combinedRecord[$field] = $user ? htmlspecialchars($user['email'] ?? 'N/A') : '<del>Deleted User</del>';
+                        break;
+                    case 'Product ID':
+                        // Add product ID
+                        $combinedRecord[$field] = $purchase['product_id'] ?? '';
+                        break;
+                    case 'title':
+                        // Add product title or mark as removed with <del> tag
+                        $combinedRecord[$field] = $product ? htmlspecialchars($product['cardTitle'] ?? 'N/A') : '<del>Removed Product</del>';
+                        break;
+                    case 'itemPrice':
+                        // Add item price or mark as removed with <del> tag
+                        $combinedRecord[$field] = $product ? htmlspecialchars($product['itemPrice'] ?? 'N/A') : '<del>Removed Product</del>';
+                        break;
+                    case 'session':
+                        // Add session string (e.g. Stripe or internal reference)
+                        $combinedRecord[$field] = htmlspecialchars($purchase['session'] ?? 'N/A');
+                        break;
+                    case 'Purchased_Date':
+                        // Add purchase date (formatted if it is a DateTimeInterface)
+                        $dateValue = $purchase['date'] ?? null;
+                        $combinedRecord[$field] = ($dateValue instanceof DateTimeInterface) ?
+                            $dateValue->format('Y-m-d H:i:s') : htmlspecialchars($dateValue ?? 'N/A');
+                        break;
+                    default:
+                        // Fallback for unexpected field names
+                        $combinedRecord[$field] = 'Unknown Field';
+                        error_log("Unknown field '" . $field . "' in \$desired_order for purchase record.");
+                        break;
                 }
-                // Add the original purchase document ID to the combined record for the delete button
-                $combinedRecord['purchase_document_id'] = $purchase['ID'];
-                // Add the completed combined record to the list
-                $purchasesList[] = $combinedRecord;
-            } else {
-                 // Log if user or product details were missing for a specific purchase record, indicating incomplete data
-                 error_log("Missing user or product details for purchase UID: " . ($purchase['uid'] ?? 'Unknown') . ", Product ID: " . ($purchase['product_id'] ?? 'Unknown') . ". Purchase ID: " . ($purchase['ID'] ?? 'Unknown') . ". Skipping record.");
             }
+            // Always include the purchase document ID for frontend operations like delete/edit
+            $combinedRecord['purchase_document_id'] = $purchase['ID'];
+            // Add the fully built record to the final array for rendering
+            $purchasesList[] = $combinedRecord;
         }
     } else {
         // Set the error flag if fetching users or products failed
@@ -182,8 +185,8 @@ if (is_array($purchases) && !isset($purchases['error'])) {
                    foreach ($desired_order as $field):
                        echo "<td>";
                        // Output the value, apply htmlspecialchars for safety
-                         // Use the field name to access the value in the $record
-                       echo htmlspecialchars($record[$field] ?? ''); // Use null coalescing for safety
+                       // Use the field name to access the value in the $record
+                       echo (strip_tags($record[$field], '<del>')); // Use null coalescing for safety
                        echo "</td>";
                    endforeach;
                    ?>

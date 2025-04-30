@@ -74,6 +74,7 @@ require_once 'head.php';
                             <div style="width: 302px; height: 422px; position: relative;">
                                 <div style="width: 302px; height: 422px; position: absolute;">
                                     <iframe
+                                        title="reCAPTCHA"
                                         src="https://www.google.com/recaptcha/api/fallback?k=<?php echo $site_key ?>"
                                         frameborder="0"
                                         scrolling="no"

@@ -124,7 +124,7 @@ class Purchases {
         $results = [];
         foreach ($decoded as $row) {
             if (isset($row['document'])) {
-            $results[] = $this->_parseFirestoreDocument($row['document']);
+                $results[] = $this->_parseFirestoreDocument($row['document']);
             }
         }
         return $results;

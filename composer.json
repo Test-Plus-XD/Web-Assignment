@@ -3,6 +3,7 @@
         "sentry/sentry": "^4.11",
         "stripe/stripe-php": "^16.6",
         "sentry/sdk": "^4.0",
-        "kreait/firebase-php": "^5.26"
+        "kreait/firebase-php": "^5.26",
+        "guzzlehttp/promises": "^1.5"
     }
 }

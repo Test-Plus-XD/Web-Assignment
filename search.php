@@ -8,7 +8,7 @@ require_once 'head.php';
 <body style="font-family:Zen Maru Gothic"> 
     <main class="search_main">
         <div class="container">
-            <h1 class="mt-4">Search for Products</h1>
+            <h1 class="mt-4">Search for Product</h1>
             <!-- Search form -->
             <div class="sticky-top" style="top:7.5vh">
                 <form id="searchForm" class="my-2 mx-2">

@@ -91,7 +91,7 @@ if ($response === false) {
             </div>
         </div>
     </main>
-    <script src="src/js/firebase_cdn.js"></script>
+    <!--<script src="src/js/firebase_cdn.js"></script>-->
     <?php include 'footer.php'; ?>
 </body>
 </html>
