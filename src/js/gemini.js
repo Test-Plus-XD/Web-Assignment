@@ -7,7 +7,7 @@ import cors from "cors";
 import languageDetect from 'languagedetect';
 
 dotenv.config();
-console.log("Stripe secret key loaded:", process.env.gemini_api_key ? "Yes" : "No");
+console.log("Gemini secret key loaded:", process.env.gemini_api_key ? "Yes" : "No");
 
 const app = express();
 const port = 3000; // Port for API

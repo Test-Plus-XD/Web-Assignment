@@ -27,6 +27,7 @@ app.post('/checkout', async (req, res) => {
                 currency: 'hkd',
                 product_data: {
                     name: item.name,
+                    images: [item.image] // Add the image URL
                 },
                 unit_amount: Math.round(item.price * 100), // Convert to cents
             },

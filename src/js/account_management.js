@@ -74,108 +74,118 @@ document.addEventListener('DOMContentLoaded', function () {
         // Attach a click handler to perform account deletion
         deleteButton.addEventListener("click", async () => {
             // Confirm the user wants to permanently delete their account
-            if (!confirm("Are you sure you want to delete your account permanently?")) return;
-
+            if (!confirm("Are you sure you want to delete your account permanently? This action cannot be undone.")) return;
             // Get the currently signed-in Firebase user
             const user = firebase.auth().currentUser;
+
             if (!user) {
-                // If no Firebase user is logged in, alert and exit
-                //alert("You must be signed in to delete your Firebase account.");
-                alert("Please re-login before deleting your account for security reasons.");
-                // Session is too old – reauthenticate required
-                let providerId = user.providerData[0]?.providerId;
-                let provider;
-                // Choose correct OAuth provider
-                if (providerId === 'google.com') {
-                    provider = new firebase.auth.GoogleAuthProvider();
-                } else if (providerId === 'github.com') {
-                    provider = new firebase.auth.GithubAuthProvider();
-                } else {
-                    alert("Unsupported provider: " + providerId);
-                    provider = new firebase.auth.GoogleAuthProvider();
-                    return;
-                }
+                // If no Firebase user is logged in, prompt re-authentication
+                alert("You must be signed in to delete your Firebase account.");
 
                 try {
+                    // Default to Google re-authentication provider
+                    const provider = new firebase.auth.GoogleAuthProvider();
+
                     // Reauthenticate via popup
-                    const result = await user.reauthenticateWithPopup(provider);
-                    await result.user.delete(); // Try deletion again
+                    const result = await firebase.auth().signInWithPopup(provider);
+                    const reauthenticatedUser = result.user;  // Get the reauthenticated user
+
+                    // After successful reauthentication, call the delete function
+                    await deleteUserAccount(reauthenticatedUser);
                 } catch (reauthError) {
                     console.error("Reauthentication failed:", reauthError);
                     alert("Could not reauthenticate. Account not deleted.");
                     return;
                 }
-            }
-
-            try {
-                // Attempt to delete the user from Firebase Auth
-                await user.delete();
-                // Then call our server to delete their record and destroy the session
-                const data = await postAccountAction("delete");
-                // On success, notify the user, clear storage, and redirect to registration
-                alert(data.message);
-                localStorage.clear();
-                localStorage.removeItem("cartItems");
-                //window.location.href = "login.php";
-            } catch (err) {
-                // Handle specific Firebase errors (e.g. requires recent login)
-                console.error("Delete error:", err);
-                if (err.code === "auth/requires-recent-login") {
-                    alert("Please re-login before deleting your account for security reasons.");
-                    // Session is too old – reauthenticate required
-                    const providerId = user.providerData[0]?.providerId;
-                    let provider;
-                    // Choose correct OAuth provider
-                    if (providerId === 'google.com') {
-                        provider = new firebase.auth.GoogleAuthProvider();
-                    } else if (providerId === 'github.com') {
-                        provider = new firebase.auth.GithubAuthProvider();
-                    } else {
-                        alert("Unsupported provider: " + providerId);
-                        //provider = new firebase.auth.GoogleAuthProvider();
-                        return;
-                    }
-
-                    try {
-                        // Reauthenticate via popup
-                        const result = await user.reauthenticateWithPopup(provider);
-                        await result.user.delete(); // Try deletion again
-                        alert("Account reauthenticated and deleted.");
-                        // On success, notify the user, clear storage, and redirect to registration
-                        alert(data.message);
-                        localStorage.clear();
-                        localStorage.removeItem("cartItems");
-                        window.location.href = "login.php";
-                    } catch (reauthError) {
-                        console.error("Reauthentication failed:", reauthError);
-                        alert("Could not reauthenticate. Account not deleted.");
-                    }
-                } else {
-                    // General error fallback
-                    alert("Delete failed: " + err.message);
-                }
-            }
-
-            try {
-                // Attempt to delete the user from Firestore
-                const response = await fetch(`http://localhost/Web%20Assignment/Class_users.php/uid/${User_id}`, {
-                    method: 'DELETE'
-                });
-                const result = await response.json();
-                if (response.ok && result.status === 'success') {
-                    alert("Your account and data have been deleted.");
-                    window.location.href = 'login.php'; // Redirect to login after deletion
-                } else {
-                    console.warn("Firebase Auth deleted, but Firestore user data deletion failed.");
-                    alert("Account deleted from Firebase, but not from Firestore: " + (result.message || "Unknown error"));
-                }
-            } catch (apiError) {
-                console.error("Failed to call backend delete API:", apiError);
-                alert("Your Firebase account was deleted, but there was a problem deleting your user data.");
+            } else {
+                // If the user is already logged in, proceed with deletion
+                await deleteUserAccount(user);
             }
         });
     } else {
         // Warn in the console if the delete button is not found
         console.warn("Delete button element not found.");
+    }
+
+    // Function to handle account deletion after successful re-authentication or if already logged in
+    async function deleteUserAccount(user) {
+        // Get the providerId of the user for reauthentication
+        let providerId = user.providerData[0]?.providerId;
+        try {
+            // Attempt to delete the user from Firebase Authentication
+            await user.delete();
+            console.log("Firebase Auth user deleted");
+        } catch (err) {
+            // Log the error and handle specific Firebase error codes
+            console.error("Delete error:", err);
+            if (err.code === "auth/requires-recent-login") {
+                // If recent login is required, inform the user and reauthenticate
+                alert("Please re-login before deleting your account for security reasons.");
+                // Determine the appropriate provider for reauthentication
+                let provider =
+                    providerId === 'github.com'
+                        ? new firebase.auth.GithubAuthProvider()
+                        : new firebase.auth.GoogleAuthProvider(); // Fallback to Google
+                try {
+                    // Reauthenticate the user via popup
+                    const result = await user.reauthenticateWithPopup(provider);
+                    // After successful reauthentication, delete the user
+                    await result.user.delete();
+                    console.log("Reauthenticated and deleted Auth user");
+                } catch (reauthErr) {
+                    console.error("Reauth failed:", reauthErr);
+                    alert("Could not reauthenticate—account not deleted.");
+                    return;
+                }
+            } else {
+                alert("Could not delete your account: " + err.message);
+                return;
+            }
+        }
+
+        // After Firebase Auth deletion, attempt to delete user data from Firestore
+        let AuthResult;
+        try {
+            AuthResult = await deleteFirestoreUserData(user.uid);
+            console.log("Firestore user data deleted:", AuthResult);
+        } catch (AuthError) {
+            console.warn("Firestore delete failed:", AuthError);
+            // Still proceed to kill the session below
+        }
+
+        // Notify backend to destroy the PHP session and clean up
+        let sessionResult;
+        try {
+            sessionResult = await postAccountAction("delete");
+            console.log("Server session destroyed:", sessionResult);
+        } catch (sessErr) {
+            console.error("Session destroy failed:", sessErr);
+            alert("Auth deleted, but failed to destroy your session.");
+            return;
+        }
+
+        // Clear storage and redirect
+        alert(sessionResult.message);
+        localStorage.clear();
+        localStorage.removeItem("cartItems");
+        window.location.href = "login.php";
+    }
+    // Helper function: delete user data from Firestore via internal PHP API
+    async function deleteFirestoreUserData(uid) {
+        // Send a DELETE request to the backend API to remove user data by UID
+        const response = await fetch(
+            `http://localhost/Web%20Assignment/Class_users.php/uid/${encodeURIComponent(uid)}`,
+            {
+                method: 'DELETE',
+                headers: { 'Accept': 'application/json' },
+                keepalive: true
+            }
+        );
+        if (!response.ok) {
+            const err = await response.json().catch(() => ({ message: response.statusText }));
+            throw new Error(err.message || `HTTP ${response.status}`);
+        }
+        // Returns the parsed JSON response, or throws on network error/non-2XX
+        return response.json();
     }
 });

@@ -7,6 +7,7 @@ document.getElementById("checkoutButton").addEventListener("click", async () => 
         const product = await fetchProductById(item.pid);
         return {
             name: product.cardTitle ?? "Untitled Product",
+            image: product.imageSrc ?? null,
             price: product.itemPrice ?? 0,
             quantity: item.quantity ?? 1
         };
@@ -121,7 +122,8 @@ document.addEventListener("DOMContentLoaded", async () => {
 
                     // Add HTML for the cart item
                     cartContainer.innerHTML += `
-                        <div style="border: 1px solid ccc; padding: 10px; margin-bottom: 10px; display: flex; align-items: center;">
+                        <br>
+                        <div style="border: 1px solid #ccc; padding: 1px; margin-bottom: 1px; display: flex; align-items: center;">
                             <img src="${product.imageSrc ?? ''}" alt="${product.imageAlt ?? 'Product Image'}" style="width: 135px; height: auto; margin-right: 15px;">
                             <div style="flex-grow: 1;">
                                 <h5>${product.cardTitle ?? 'Untitled Product'}</h5>
@@ -131,6 +133,7 @@ document.addEventListener("DOMContentLoaded", async () => {
                                 <button class="btn btn-danger btn-sm" onclick="removeItem('${product.ID}')">Remove</button>
                             </div>
                         </div>
+                        <br>
                     `;
                 } else {
                     // Display a placeholder for items whose product details failed to fetch

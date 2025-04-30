@@ -12,11 +12,13 @@ const firebaseConfig = {
     measurementId: "G-S00EXY5D6J"
 };
 
-// Initialize Firebase
-const app = firebase.initializeApp(firebaseConfig);
+// Initialise Firebase and ensure it's done only once
+if (firebase.apps.length === 0) firebase.initializeApp(firebaseConfig); // Initialise if no apps are initialised
+// Get the default app
+const app = firebase.app();  // Retrieve the default Firebase app instance
+const auth = firebase.auth(); // Integrated
+const firestore = firebase.firestore(); // Integrated
 const analytics = firebase.analytics(); // Not fully integrated
-const auth = firebase.auth(); // Not fully integrated
-const firestore = firebase.firestore(); // Not fully integrated
 const appCheck = firebase.appCheck(); // Not yet integrated
 //appCheck.activate('6Left_4qAAAAAGSyUGZfW4CPtYlVch3kqI5NWR6X', false); // Instantise a reCAPTCHA onload. If true, the SDK automatically refreshes App Check tokens as needed.
 //site key v3: 6Lfniv8qAAAAAFd_IKlfvcKGTrKkjda5y2Rat40Z
@@ -32,6 +34,17 @@ window.firebaseAppCheck = appCheck;
 window.firebaseAuth = auth;
 window.firebaseAnalytics = analytics;
 window.firebaseFirestore = firestore;
+
+// Log OAuth User on Firebase side
+let OAuthUser = firebase.auth().currentUser;
+firebase.auth().onAuthStateChanged((OAuthUser) => {
+    if (OAuthUser) {
+        console.log('User is signed in:', OAuthUser);
+    } else {
+        console.log('No user is signed in');
+    }
+});
+
 // Ensure all scripts have loaded before dispatching event
 setTimeout(() => {
     console.log("firebase-cdn.js: Dispatching firebase-ready event.");

@@ -120,7 +120,6 @@ document.addEventListener("DOMContentLoaded", () => {
             });
     };
 
-
     // Function to delete a Purchase Record using the API endpoint
     // Assumes Class_purchases.php has a DELETE /purchase/{id} endpoint
     window.deletePurchase = function (purchaseId) {
@@ -180,7 +179,7 @@ document.addEventListener("DOMContentLoaded", () => {
         }
         labelText = labelText.charAt(0).toUpperCase() + labelText.slice(1);
         if (confirm(`Proceed to add new ${labelText}?`)) {
-            window.location.href = `dashboard.php?content=update&type=${type}`;
+            window.location.href = `dashboard.php?content=update&type=${labelText.toLowerCase()}`;
         }
     };
 
@@ -215,7 +214,6 @@ document.addEventListener("DOMContentLoaded", () => {
     // Function for toggling descriptions
     document.addEventListener("click", (event) => {
         const target = event.target;
-
         // Check if Read More was clicked
         if (target.matches("[data-action='expand-description']")) {
             const productId = target.dataset.productId;
@@ -248,14 +246,19 @@ document.addEventListener("DOMContentLoaded", () => {
     });
     // Function to handle YouTube link conversion
     const updateForm = document.getElementById('updateForm');
-    updateForm.addEventListener('submit', function (event) {
-        event.preventDefault();
-        const YTLink = document.getElementById('YTLink');
-        const originalUrl = YTLink.value;
-        const embedUrl = convertToEmbedURL(originalUrl);
-        YTLink.value = embedUrl;
-        this.submit();
-    });
+    if (updateForm) {
+        updateForm.addEventListener('submit', function (event) {
+            event.preventDefault(); // Prevent the form from submitting normally
+            const YTLink = document.getElementById('YTLink'); // Locate the YouTube input field
+            // Only proceed if the YTLink element exists
+            if (YTLink) {
+                const originalUrl = YTLink.value;              // Get the original URL from the input
+                const embedUrl = convertToEmbedURL(originalUrl); // Convert the URL to embed format
+                YTLink.value = embedUrl;                         // Replace the input value with embed version
+            }
+            this.submit(); // Submit the form programmatically after modification
+        });
+    }
     function convertToEmbedURL(youtubeURL) {
         if (typeof youtubeURL !== 'string' || youtubeURL.trim() === '') {
             return youtubeURL;
